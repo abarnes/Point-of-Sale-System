@@ -27,4 +27,4 @@ if (ereg_replace("[A-Za-z]", "",$latest)<=ereg_replace("[A-Za-z]", "",$current))
 <h4><?php echo $string; ?></h4>
 
 <?php //echo shell_exec('/Users/Schwamm/Sites/barnespossystem/update.sh'); ?>
-<?php echo shell_exec('/var/www/test.sh'); ?>
+<?php echo shell_exec('cd /var/www; ./test.sh'); ?>
