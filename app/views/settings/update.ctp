@@ -23,8 +23,8 @@ if (ereg_replace("[A-Za-z]", "",$latest)<=ereg_replace("[A-Za-z]", "",$current))
 	$string = 'Updates are available for your software.  Latest version: '.$latest.', current version: '.$current;			
 }
 ?>
-dsf
-<h4><?php echo $string; ?></h4>
 
+<h4><?php echo $string; ?></h4>
+sfghghdf
 <?php //echo shell_exec('/Users/Schwamm/Sites/barnespossystem/update.sh'); ?>
 <?php echo shell_exec('./var/www/update.sh'); ?>
