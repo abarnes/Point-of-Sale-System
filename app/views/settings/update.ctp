@@ -9,7 +9,7 @@ Barnes POS Systems
 www.barnespos.com
 ------------------------------------------------------------------------------->
 <br/>
-<h3>System Update</h3>
+<h3>System Updated</h3>
 
             <div class="link"><a href="/pages/admin"><< Admin Panel</a></div><br/>
 <p>Change the general settings for your system here.</p><br/>
