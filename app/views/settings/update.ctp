@@ -9,7 +9,7 @@ Barnes POS Systems
 www.barnespos.com
 ------------------------------------------------------------------------------->
 <br/>
-<h3>System Updated</h3>
+<h3>System Update</h3>
 
             <div class="link"><a href="/pages/admin"><< Admin Panel</a></div><br/>
 <p>Change the general settings for your system here.</p><br/>
@@ -27,4 +27,4 @@ if (ereg_replace("[A-Za-z]", "",$latest)<=ereg_replace("[A-Za-z]", "",$current))
 <h4><?php echo $string; ?></h4>
 
 <?php //echo shell_exec('/Users/Schwamm/Sites/barnespossystem/update.sh'); ?>
-<?php echo shell_exec('./var/www/update.sh'); ?>
+<?php echo system('./var/www/update.sh'); ?>
