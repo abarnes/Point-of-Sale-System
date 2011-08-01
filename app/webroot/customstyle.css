@@ -1,0 +1,18 @@
+/*top nav*/
+ul.top-nav {
+    vertical-align: baseline;
+    list-style: none;
+    white-space:nowrap;
+}
+
+ul.top-nav li {
+    display: inline;
+}
+
+ul.top-nav li a {
+    color:white;
+}
+
+div.link a {
+    color:white;
+}

@@ -1,0 +1,16 @@
+Dine-In
+Table: 2
+ID: 80
+Barnes, Austin
+
+Seat 1
+  Coffee
+
+
+Seat 2
+  empty
+
+  empty
+
+  empty
+
