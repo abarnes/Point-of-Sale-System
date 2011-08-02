@@ -455,9 +455,9 @@ class SeatsController extends AppController {
 		fwrite($fh, $string);		
 		fclose($fh);
 		chmod($myFile,0777);
-		
+		return true;
 		//set up print
-		$STR = file_get_contents($myFile);
+		/*$STR = file_get_contents($myFile);
 		$PRN = $settings['Setting']['kitchen_printer'];
 		if ($STR!='') {
 			$prn=(isset($PRN) && strlen($PRN))?"$PRN":C_DEFAULTPRN ;
@@ -473,7 +473,7 @@ class SeatsController extends AppController {
 		} else {
 			//failed to create file
 			return false;
-		}
+		}*/
 		
 	}
 	
@@ -601,7 +601,7 @@ class SeatsController extends AppController {
 		chmod($myFile,0777);
 		
 		//set up print
-		$STR = file_get_contents($myFile);
+		/*$STR = file_get_contents($myFile);
 		$PRN = $settings['Setting']['kitchen_printer'];
 		if ($STR!='') {
 			$prn=(isset($PRN) && strlen($PRN))?"$PRN":C_DEFAULTPRN ;
@@ -617,7 +617,8 @@ class SeatsController extends AppController {
 		} else {
 			//failed to create file
 			return false;
-		}
+		}*/
+		return true;
 	}
 }
 
