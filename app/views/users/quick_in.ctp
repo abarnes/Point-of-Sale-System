@@ -35,7 +35,7 @@ www.barnespos.com
     <a href="/users/login" style="float:left;"><input type="button" value="Clock In" style="width:130px;font-size:1em;height:50px;" class="submits"/></a>
     
     <br/><br/><br/>
-    <p style="float:left;">**Once clocked in as "demo", you can use the quick key 11111 to access the system</p>
+    <p style="float:left;">For demo users: **Once clocked in as "demo", you can use the quick key 11111 to access the system</p>
     
 </div>
 <div style="width:30%;float:right;">
