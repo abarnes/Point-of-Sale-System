@@ -96,6 +96,137 @@ class ClocksController extends AppController {
 		$this->set('ti',count($tic));
 	}
 	
+	function shift() {
+		$userInfo = $this->Auth->user();
+		$id = $userInfo['User']['id'];
+		if ($userInfo['User']['level']!='1' && $id!=$userInfo['User']['id']) {
+			$this->Session->setFlash('This Action Is Restricted To Administrators. Please Authenticate As An Administrator And Try Again.');
+			$this->redirect(array('controller'=>'users','action'=>'login'));
+		}
+		$this->set('user',$this->User->findById($id));
+		
+		if ($redirect==null || $redirect=='0') {
+			$this->set('red','0');
+		} else {
+			if ($index=='2') {
+				$this->set('red','1');
+			} else {
+				$this->set('red','2');
+			}
+		}
+		if (!empty($this->data)) {
+			//die(print_r($this->data));
+			$conditions = array('Clock.complete'=>'1','Clock.user_id'=>$id);
+			
+			if (strlen($this->data['Clock']['startdate'])<9 || strlen($this->data['Clock']['enddate'])<9) {
+				$this->Session->setFlash('Invalid data parameters given.');
+				$this->redirect(array('controller'=>'clocks','action'=>'report_all'));
+			}
+			
+			if(strtotime($this->data['Clock']['startdate'])<=strtotime($this->data['Clock']['enddate'])) {
+				$shiftc = array('Clock.complete'=>'1');
+				if ($this->data['Clock']['startdate']==$this->data['Clock']['enddate']) {
+					$conditions['Clock.created BETWEEN ? AND ?']=array(date('Y-m-d',strtotime($this->data['Clock']['startdate'])),date('Y-m-d',strtotime($this->data['Clock']['startdate'])+86400));
+					$seats = $this->Ticket->find('all',array('conditions'=>array('Ticket.status >'=>'1','Ticket.user_id'=>$id,'Ticket.created BETWEEN ? AND ?'=>array(date('Y-m-d',strtotime($this->data['Clock']['startdate'])),date('Y-m-d',strtotime($this->data['Clock']['startdate'])+86400)))));
+				} else {
+					$conditions['Clock.created BETWEEN ? AND ?']=array(date('Y-m-d',strtotime($this->data['Clock']['startdate'])),date('Y-m-d',strtotime($this->data['Clock']['enddate'])));
+					$seats = $this->Ticket->find('all',array('conditions'=>array('Ticket.status >'=>'1','Ticket.user_id'=>$id,'Ticket.created BETWEEN ? AND ?'=>array(date('Y-m-d',strtotime($this->data['Clock']['startdate'])),date('Y-m-d',strtotime($this->data['Clock']['enddate']))))));
+				}
+			} else {
+				//end date before start date
+				$this->Session->setFlash('Invalid date parameters given.');
+				$this->redirect(array('controller'=>'clocks','action'=>'report_all'));
+			}
+			
+			$this->paginate = array('limit' => 20,'conditions'=>$conditions);
+			$clocks = $this->paginate('Clock');
+			
+			//add data for shifts, hours
+			$i=0;
+			$total_time=0;
+			$total_cost = 0;
+			foreach ($clocks as $a) {
+				$diff = strtotime($a['Clock']['out'])-strtotime($a['Clock']['in']);
+				$total_time = $total_time+$diff;
+				
+				$clocks[$i]['Clock']['time']=$this->_timeBetween(strtotime($a['Clock']['in']),strtotime($a['Clock']['out']));
+				$clocks[$i]['Clock']['cst']=$a['Clock']['cost'];
+				$total_cost = $total_cost+$a['Clock']['cost'];
+				$i++;
+			}
+			
+			$this->set('start',$this->data['Clock']['startdate']);
+			$this->set('end',$this->data['Clock']['enddate']);
+		} else {
+			$conditions = array('Clock.complete'=>'1','Clock.user_id'=>$id,'Clock.created >'=>date('Y-m-d', strtotime("-2 weeks")));
+			$this->paginate = array('limit' => 20,'conditions'=>$conditions);
+			$clocks = $this->paginate('Clock');
+			
+			$seats = $this->Ticket->find('all',array('conditions'=>array('Ticket.user_id'=>$id,'Ticket.status >'=>'1','Ticket.created BETWEEN ? AND ?'=>array(date('Y-m-d',strtotime('-2 weeks')),date('Y-m-d',time())))));
+			
+			//add data for shifts, hours
+			$i=0;
+			$total_time=0;
+			$total_cost = 0;
+			foreach ($clocks as $a) {
+				$diff = strtotime($a['Clock']['out'])-strtotime($a['Clock']['in']);
+				$total_time = $total_time+$diff;
+				
+				$clocks[$i]['Clock']['time']=$this->_timeBetween(strtotime($a['Clock']['in']),strtotime($a['Clock']['out']));
+				$clocks[$i]['Clock']['cst']=$a['Clock']['cost'];
+				$total_cost = $total_cost+$a['Clock']['cost'];
+				$i++;
+			}
+			
+			$this->set('start',date('m/d/Y',strtotime('-2 weeks')));
+			$this->set('end',date('m/d/Y',time()));
+		}
+		
+		//calculate sales statistics, etc.
+		$total = 0;
+		$tickets = 0;
+		$customers = 0;
+		//die(print($seats));
+		foreach ($seats as $t) {
+			foreach ($t['Seat'] as $s) {
+				$total=$total+$s['total'];
+				
+				$customers++;
+			}
+			$tickets++;
+		}
+		$this->set('ticket_count',$tickets);
+		$this->set('cust_count',$customers);
+		$this->set('total_sales',$total);
+		if ($total_time!=0) {
+			$new = $total/$total_time;
+		} else {
+			$new = 0;
+		}
+		$new = $new*3600;
+		$this->set('ratio',round($new,'2'));
+		
+		//total time worked
+		$hours = $total_time/3600;
+		$hours = floor($hours);
+		$secs = $total_time%3600;
+		$mins = round($secs/60);
+		if ($mins<10) {
+			$mins = '0'.$mins;
+		}
+		$this->set('total_time',$hours.':'.$mins);
+		$total_cost = round($total_cost,'2');
+		$sp = explode('.',$total_cost);
+		if (isset($sp[1])) {
+			if (strlen($sp[1])==1) {
+				$total_cost = $total_cost.'0';
+			}
+		}
+		$this->set('total_cost',$total_cost);
+		
+		$this->set('clocks',$clocks);
+	}
+	
 	function report($id,$redirect=null,$index=null) {
 		//change database to records
 		$this->Ticket->setDataSource('alternate');
