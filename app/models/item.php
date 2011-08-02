@@ -31,5 +31,11 @@ class Item extends AppModel {
                 'insertQuery'            => ''
             )
     );
+    var $validate = array(
+        'name' => array(
+            'rule' => '/^[a-z0-9]$/i',
+            'message' => 'Only letters and numbers allowed.'
+        )
+    );
 }
 ?>

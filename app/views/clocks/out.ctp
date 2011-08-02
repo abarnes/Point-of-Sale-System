@@ -8,7 +8,12 @@ You may alter this code with the following limitations:
 Barnes POS Systems
 www.barnespos.com
 ------------------------------------------------------------------------------->
-<h3>Clock Out - <?php echo $user['User']['first_name'].' '.$user['User']['last_name']; ?></h3>
+<h3>Clock Out - <?php echo $user['User']['full_name']; ?></h3>
+
+<div class="link">
+<?php echo $html->link('<< Employees',array('controller'=>'users','action'=>'index')); ?>				
+<br/><br/>
+</div>
     
     <div class="label">
     <?php echo $form->create('Clock', array('action' => 'out/'.$user['User']['id'].'/h')); ?>

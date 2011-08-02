@@ -32,7 +32,7 @@ www.barnespos.com
     <?php echo $form->input('rate2', array( 'label' => 'Rate 2')); ?>
     <?php echo $form->input('rate3', array( 'label' => 'Rate 3')); ?>
     <?php echo $form->input('notes', array( 'label' => 'Notes')); ?>
-    <?php echo $form->input('enable', array( 'label' => 'Enable')); ?>
+    <?php echo $form->input('enable', array( 'label' => 'Allow Clock-In')); ?>
     <?php echo $form->input('id', array( 'type'=>'hidden')); ?>
     <?php echo $form->end('Update User'); ?>
     </div>

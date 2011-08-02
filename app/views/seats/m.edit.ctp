@@ -399,7 +399,7 @@ function remo(sn,txt,t) {
 					    'Cancel Edit', 
 					    array('controller'=>'tickets','action'=>'view'), 
 					    array('rel'=>'external'), 
-					    'Are You Sure You Want To Editing?'
+					    'Are You Sure You Want To Cancel Editing?'
 				    );
 	?></li>
     </ul>

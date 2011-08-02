@@ -267,7 +267,7 @@ www.barnespos.com
 				<tr>
 				    <td>
 					<?php if ($ticket['Type']['use_seats']=='1') { ?>	
-						<h4>Seat <?php echo $sn; ?></h4>
+						<h4>Seat <?php echo $cn+1; ?></h4>
 			                <?php } else { ?>
 						<h4>Order</h4>
 					<?php } ?>
@@ -336,6 +336,7 @@ function submitform() {
 }
 </script>
 
+<div style="width:75%;float:left;">
 <?php echo $form->create('Seat', array('action' => 'add/'.$id.'/'.$seats)); ?>
 
 <?php
@@ -346,7 +347,8 @@ $c++;
 } ?>
 
 <?php //echo $form->end('Submit'); ?>
-<a style="vertical-align:bottom;margin-left:0px;" href="#" onclick="submitform()"><input style="width:75%;" type="button" class="submits" value="Submit"></a>
+<a style="vertical-align:bottom;margin-left:0px;margin-right:20px;" href="#" onclick="submitform()"><input style="width:100%;margin-right:0px;" type="button" class="submits" value="Submit"></a>
+</div>
 
 <!----------------javascript global functions (open link, add without mods, remove)----------------->
 <script type="text/javascript">

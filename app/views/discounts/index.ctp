@@ -83,7 +83,7 @@ www.barnespos.com
 				});
 	    </script>
 	    
-	    <a href="#" onclick="opend(<?php echo $u['Discount']['id']; ?>)">View</a>
+	    <?php echo '<input style="width:70px;height:28px;font-size:1em;margin:0px 4px 0px 0px;" type="button" class="submits" value="View" onclick="opend('.$u['Discount']['id'].')">'; ?>
 	    <!--this div is what comes up when you click "view"-->
 		<div id="dialog<?php echo $u['Discount']['id']; ?>" title="<?php echo $u['Item']['name']; ?> Discount">
 		<br/>
@@ -144,13 +144,22 @@ www.barnespos.com
 			</tr>
 		    </table>
 		</div>
-            <?php echo $html->link('Edit',array('action'=>'edit/'.$u['Discount']['id'])); ?>
-            <?php echo $html->link(
+		<SCRIPT type="text/javascript">
+				function decision(url){
+				    if(confirm('Are you sure you want to delete this discount?')) location.href = url;
+				}
+				</SCRIPT>
+		<?php
+		echo '<input style="width:70px;height:28px;font-size:1em;margin:0px 4px 0px 0px;" type="button" class="submits" value="Edit" onclick="parent.location=\'/discounts/edit/'.$u['Discount']['id'].'\'">';
+		echo '<input style="width:70px;height:28px;font-size:1em;margin:0px 4px 0px 0px;" type="button" class="submits" value="Delete" onclick="decision(\'/discounts/delete/'.$u['Discount']['id'].'\')">';
+		?>
+            <?php //echo $html->link('Edit',array('action'=>'edit/'.$u['Discount']['id'])); ?>
+            <?php /*echo $html->link(
 				'Delete', 
 				array('controller'=>'discounts','action'=>'delete/'.$u['Discount']['id']), 
 				null, 
 				'Are You Sure You Want To Delete This Discount?'
-			); ?>
+			);*/ ?>
         </td>
     </tr>
     <?php } ?>

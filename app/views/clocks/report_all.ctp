@@ -81,7 +81,8 @@ www.barnespos.com
             <?php echo $u['User']['time']; ?>
         </td>
         <td>
-            <?php echo $html->link('View Employee Report',array('action'=>'report/'.$u['User']['id'])); ?>
+	    <?php echo '<input style="width:170px;height:28px;font-size:1em;margin:0px 4px 0px 0px;" type="button" class="submits" value="View Employee Report" onclick="parent.location=\'/clocks/report/'.$u['User']['id'].'\'">'; ?>
+            <?php //echo $html->link('View Employee Report',array('action'=>'report/'.$u['User']['id'])); ?>
         </td>
     </tr>
     <?php } ?>

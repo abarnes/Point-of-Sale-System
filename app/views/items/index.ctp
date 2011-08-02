@@ -46,15 +46,15 @@ www.barnespos.com
         <?php echo $form->create('Item', array('action' => 'setup')); ?>
         <tr><td style="text-align:right;font-size:80%;">Name: </td><td><?php echo $form->input('name', array( 'label' => '')); ?></td></tr>
         <tr><td style="text-align:right;font-size:80%;">Short Name: </td><td><?php echo $form->input('short_name', array( 'label' => '')); ?></td></tr>
-        <tr><td style="text-align:right;font-size:80%;">Price: </td><td><?php echo $form->input('price', array( 'label' => '')); ?></td></tr>
+        <tr><td style="text-align:right;font-size:80%;">Price: $</td><td><?php echo $form->input('price', array( 'label' => '')); ?></td></tr>
         <tr><td style="text-align:right;font-size:80%;">Category: </td><td><?php echo $form->input('category_id', array( 'label' => '')); ?></td></tr>
         <!--<tr><td style="text-align:right;font-size:80%;">Options: </td><td><?php //echo $form->input('Modifier', array( 'label' => '')); ?>
         <p>Hold the control key to select multiple items (command key on a Mac)</p>
         </td></tr>-->
         <tr><td style="text-align:right;font-size:80%;">Description: </td><td><?php echo $form->input('description', array( 'label' => '')); ?></td></tr>
         <tr><td style="text-align:right;font-size:80%;">Options on Select: </td><td><?php echo $form->input('mods_on', array( 'label' => '')); ?></td></tr>
-        <tr><td style="text-align:right;font-size:80%;">Enable: </td><td><?php echo $form->input('enable', array( 'label' => '')); ?></td></tr>
-	<tr><td style="text-align:right;font-size:80%;">Print to Kitchen: </td><td><?php echo $form->input('kitchen_print', array( 'label' => '')); ?></td></tr>
+        <tr><td style="text-align:right;font-size:80%;">Enable: </td><td><?php echo $form->input('enable', array( 'label' => '','checked'=>true)); ?></td></tr>
+	<tr><td style="text-align:right;font-size:80%;">Print to Kitchen: </td><td><?php echo $form->input('kitchen_print', array( 'label' => '','checked'=>true)); ?></td></tr>
         <tr><td></td><td>
         <?php echo $form->end('Add Item'); ?>
         <br/>
@@ -125,7 +125,7 @@ www.barnespos.com
 				});
 	    </script>
 	    
-	    <a href="#" onclick="opend(<?php echo $u['Item']['id']; ?>)">View</a>
+	    <?php echo '<input style="width:70px;height:28px;font-size:1em;margin:0px 4px 0px 0px;" type="button" class="submits" value="View" onclick="opend('.$u['Item']['id'].')">'; ?>
 	    <!--this div is what comes up when you click "view"-->
 		<div id="dialog<?php echo $u['Item']['id']; ?>" title="<?php echo $u['Item']['name']; ?>">
 		    <table>
@@ -284,14 +284,24 @@ www.barnespos.com
 				<?php } ?>
 		    <?php } ?>
 		</div>
-            <?php echo $html->link('Edit',array('action'=>'edit/'.$u['Item']['id'])); ?>
-            <?php echo $html->link(
+		<SCRIPT type="text/javascript">
+				function decision(url){
+				    if(confirm('Deleting this item may corrupt tickets and records containing this item.  It is recommended that you uncheck "enable" rather than delete this item, unless it was created in error.  Are you sure you want to delete this item?')) location.href = url;
+				}
+				</SCRIPT>
+		<?php
+		echo '<input style="width:70px;height:28px;font-size:1em;margin:0px 4px 0px 0px;" type="button" class="submits" value="Edit" onclick="parent.location=\'/items/edit/'.$u['Item']['id'].'\'">';
+		echo '<input style="width:70px;height:28px;font-size:1em;margin:0px 4px 0px 0px;" type="button" class="submits" value="Delete" onclick="decision(\'/items/delete/'.$u['Item']['id'].'\')">';
+		echo '<input style="width:110px;height:28px;font-size:1em;margin:0px 4px 0px 0px;" type="button" class="submits" value="Add Discount" onclick="parent.location=\'/discounts/add/'.$u['Item']['id'].'\'">';
+		?>
+            <?php //echo $html->link('Edit',array('action'=>'edit/'.$u['Item']['id'])); ?>
+            <?php /*echo $html->link(
 				'Delete', 
 				array('controller'=>'items','action'=>'delete/'.$u['Item']['id']), 
 				null, 
 				'Are You Sure You Want To Delete This Item?'
-			); ?>
-            <?php echo $html->link('Add Discount',array('controller'=>'discounts','action'=>'add/'.$u['Item']['id'])); ?>
+			);*/ ?>
+            <?php //echo $html->link('Add Discount',array('controller'=>'discounts','action'=>'add/'.$u['Item']['id'])); ?>
         </td>
     </tr>
     <?php } ?>

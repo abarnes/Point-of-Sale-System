@@ -444,10 +444,10 @@ class ClocksController extends AppController {
 		//rate info
 		$opts = array();
 		$opts[$user['User']['rate1']]='Rate 1 - $'.$user['User']['rate1'];
-		if ($user['User']['rate2']!='0.00') {
+		if ($user['User']['rate2']!='0.00' && $user['User']['rate2']!='') {
 			$opts[$user['User']['rate2']]='Rate 2 - $'.$user['User']['rate2'];
 		}
-		if ($user['User']['rate3']!='0.00') {
+		if ($user['User']['rate3']!='0.00' && $user['User']['rate3']!='') {
 			$opts[$user['User']['rate3']]='Rate 3 - $'.$user['User']['rate3'];
 		}
 		$this->set('opts',$opts);

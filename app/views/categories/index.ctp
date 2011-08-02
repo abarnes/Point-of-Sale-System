@@ -47,7 +47,7 @@ www.barnespos.com
     
         <?php echo $form->create('Category', array('action' => 'setup')); ?>
         <tr><td style="text-align:right;font-size:80%;">Name: </td><td><?php echo $form->input('name', array( 'label' => '')); ?></td></tr>
-        <tr><td style="text-align:right;font-size:80%;">Enable: </td><td><?php echo $form->input('enable', array( 'label' => '')); ?></td></tr>
+        <tr><td style="text-align:right;font-size:80%;">Enable: </td><td><?php echo $form->input('enable', array( 'label' => '','checked'=>true)); ?></td></tr>
         <tr><td></td><td>
         <?php echo $form->end('Add Category'); ?>
         <br/>
@@ -109,7 +109,7 @@ www.barnespos.com
 				});
 	    </script>
 	    
-	    <a href="#" onclick="opend(<?php echo $u['Category']['id']; ?>)">View</a>
+	    <?php echo '<input style="width:70px;height:28px;font-size:1em;margin:0px 4px 0px 0px;" type="button" class="submits" value="View" onclick="opend('.$u['Category']['id'].')">'; ?>
 	    <!--this div is what comes up when you click "view"-->
 		<div id="dialog<?php echo $u['Category']['id']; ?>" title="<?php echo $u['Category']['name']; ?>">
 		    <table>
@@ -132,13 +132,22 @@ www.barnespos.com
 			</tr>
 		    </table>
 		</div>
-            <?php echo $html->link('Edit',array('action'=>'edit/'.$u['Category']['id'])); ?>
-            <?php echo $html->link(
+		<SCRIPT type="text/javascript">
+				function decision(url){
+				    if(confirm('Are you sure you want to delete this category?')) location.href = url;
+				}
+				</SCRIPT>
+		<?php
+		echo '<input style="width:70px;height:28px;font-size:1em;margin:0px 4px 0px 0px;" type="button" class="submits" value="Edit" onclick="parent.location=\'/categories/edit/'.$u['Category']['id'].'\'">';
+		echo '<input style="width:70px;height:28px;font-size:1em;margin:0px 4px 0px 0px;" type="button" class="submits" value="Delete" onclick="decision(\'/categories/delete/'.$u['Category']['id'].'\')">';
+		?>
+            <?php //echo $html->link('Edit',array('action'=>'edit/'.$u['Category']['id'])); ?>
+            <?php /*echo $html->link(
 				'Delete', 
 				array('controller'=>'categories','action'=>'delete/'.$u['Category']['id']), 
 				null, 
 				'Are You Sure You Want To Delete This Category?'
-			); ?>
+			);*/ ?>
         </td>
     </tr>
     <?php } ?>

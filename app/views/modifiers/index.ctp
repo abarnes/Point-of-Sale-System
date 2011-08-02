@@ -52,7 +52,7 @@ www.barnespos.com
         <p>Hold the control key to select multiple items (command key on a Mac)</p>
         </td></tr>
         <tr><td style="text-align:right;font-size:80%;">Description: </td><td><?php echo $form->input('description', array( 'label' => '')); ?></td></tr>
-        <tr><td style="text-align:right;font-size:80%;">Enable: </td><td><?php echo $form->input('enable', array( 'label' => '')); ?></td></tr>
+        <tr><td style="text-align:right;font-size:80%;">Enable: </td><td><?php echo $form->input('enable', array( 'label' => '','checked'=>true)); ?></td></tr>
         <tr><td></td><td>
         <?php echo $form->end('Add Modifier'); ?>
         <br/>
@@ -118,7 +118,7 @@ www.barnespos.com
 				});
 	    </script>
 	    
-	    <a href="#" onclick="opend(<?php echo $u['Modifier']['id']; ?>)">View</a>
+	   <?php echo '<input style="width:70px;height:28px;font-size:1em;margin:0px 4px 0px 0px;" type="button" class="submits" value="View" onclick="opend('.$u['Modifier']['id'].')">'; ?>
 	    <!--this div is what comes up when you click "view"-->
 		<div id="dialog<?php echo $u['Modifier']['id']; ?>" title="<?php echo $u['Modifier']['name']; ?>">
 		    <table>
@@ -150,13 +150,22 @@ www.barnespos.com
 			</tr>
 		    </table>
 		</div>
-            <?php echo $html->link('Edit',array('action'=>'edit/'.$u['Modifier']['id'])); ?>
-            <?php echo $html->link(
+		<SCRIPT type="text/javascript">
+				function decision(url){
+				    if(confirm('Deleting this modifier may corrupt tickets and records containing it.  It is recommended that you uncheck "enable" rather than delete this modifier, unless it was created in error.  Are you sure you want to delete this modifier?')) location.href = url;
+				}
+				</SCRIPT>
+		<?php
+		echo '<input style="width:70px;height:28px;font-size:1em;margin:0px 4px 0px 0px;" type="button" class="submits" value="Edit" onclick="parent.location=\'/modifiers/edit/'.$u['Modifier']['id'].'\'">';
+		echo '<input style="width:70px;height:28px;font-size:1em;margin:0px 4px 0px 0px;" type="button" class="submits" value="Delete" onclick="decision(\'/modifiers/delete/'.$u['Modifier']['id'].'\')">';
+		?>
+            <?php //echo $html->link('Edit',array('action'=>'edit/'.$u['Modifier']['id'])); ?>
+            <?php /*echo $html->link(
 				'Delete', 
 				array('action'=>'delete/'.$u['Modifier']['id']), 
 				null, 
 				'Are You Sure You Want To Delete This Modifier?'
-			); ?>
+			);*/ ?>
         </td>
     </tr>
     <?php } ?>

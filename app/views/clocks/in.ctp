@@ -8,14 +8,20 @@ You may alter this code with the following limitations:
 Barnes POS Systems
 www.barnespos.com
 ------------------------------------------------------------------------------->
-    <table style="border:0px solid black;margin-right:auto;margin-left:auto;">
+    <h3>Clock In - <?php echo $user['User']['full_name']; ?></h3>
+
+<div class="link">
+<?php echo $html->link('<< Employees',array('controller'=>'users','action'=>'index')); ?>				
+<br/><br/>
+</div>
     
-    <?php echo $form->create('Clock', array('action' => 'in/'.$user['User']['id'])); ?>
-    <tr><td style="text-align:right;font-size:80%;">Rate: </td><td><?php echo $form->input('rate', array( 'label' => '','options'=>$opts)); ?></td></tr>
-    <tr><td></td><td>
+    <div class="label">
+    <?php echo $form->create('Clock', array('action' => 'in/'.$user['User']['id'].'/h')); ?>
+    <?php echo $form->input('in', array( 'label' => 'Time In: ')); ?>
+    <?php echo $form->input('rate', array( 'label' => '','options'=>$opts)); ?>
     <?php echo $form->end('Clock In'); ?>
+    </div>
     <br/>
-</td></tr></table>
 
 
 

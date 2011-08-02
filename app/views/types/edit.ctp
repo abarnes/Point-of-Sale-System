@@ -25,6 +25,7 @@ www.barnespos.com
     <?php echo $form->input('name', array( 'label' => 'Name')); ?>
     <?php echo $form->input('enable', array( 'label' => 'Enable')); ?>
     <?php echo $form->input('use_seats', array( 'label' => 'Use Seats')); ?>
+    <?php echo $form->input('use_tables', array( 'label' => 'Use Tables')); ?>
     <?php echo $form->input('id', array( 'type'=>'hidden')); ?>
     <?php echo $form->end('Update Ticket Type'); ?>
     </div>

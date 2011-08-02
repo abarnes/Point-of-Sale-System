@@ -156,7 +156,7 @@ www.barnespos.com
                                         });
                     </script>
                     
-                    <a href="#" onclick="opend(<?php echo $u['Item']['id']; ?>)">View</a>
+                    <?php echo '<input style="width:70px;height:28px;font-size:1em;margin:0px 4px 0px 0px;" type="button" class="submits" value="View" onclick="opend('.$u['Item']['id'].')">'; ?>
                     <!--this div is what comes up when you click "view"-->
                         <div id="dialog<?php echo $u['Item']['id']; ?>" title="<?php echo $u['Item']['name']; ?>">
                             <table>
@@ -315,14 +315,24 @@ www.barnespos.com
 				<?php } ?>
 			    <?php } ?>
                         </div>
-                    <?php echo $html->link('Edit',array('action'=>'edit/'.$u['Item']['id'].'/1')); ?>
-                    <?php echo $html->link(
+			<SCRIPT type="text/javascript">
+				function decision(url){
+				    if(confirm('Are you sure you want to delete this item?')) location.href = url;
+				}
+				</SCRIPT>
+			<?php
+			echo '<input style="width:70px;height:28px;font-size:1em;margin:0px 4px 0px 0px;" type="button" class="submits" value="Edit" onclick="parent.location=\'/items/edit/'.$u['Item']['id'].'/1\'">';
+			echo '<input style="width:70px;height:28px;font-size:1em;margin:0px 4px 0px 0px;" type="button" class="submits" value="Delete" onclick="decision(\'/items/delete/'.$u['Item']['id'].'/1\')">';
+			echo '<input style="width:110px;height:28px;font-size:1em;margin:0px 4px 0px 0px;" type="button" class="submits" value="Add Discount" onclick="parent.location=\'/discounts/add/'.$u['Item']['id'].'\'">';
+			?>
+                    <?php //echo $html->link('Edit',array('action'=>'edit/'.$u['Item']['id'].'/1')); ?>
+                    <?php /*echo $html->link(
                                         'Delete', 
                                         array('controller'=>'items','action'=>'delete/'.$u['Item']['id'].'/1'), 
                                         null, 
                                         'Are You Sure You Want To Delete This Item?'
-                                ); ?>
-		    <?php echo $html->link('Add Discount',array('controller'=>'discounts','action'=>'add/'.$u['Item']['id'])); ?>
+                                );*/ ?>
+		    <?php //echo $html->link('Add Discount',array('controller'=>'discounts','action'=>'add/'.$u['Item']['id'])); ?>
                 </td>
             </tr>
             <?php } ?>

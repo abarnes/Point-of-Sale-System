@@ -8,6 +8,18 @@ You may alter this code with the following limitations:
 Barnes POS Systems
 www.barnespos.com
 ------------------------------------------------------------------------------->
+<script type="text/javascript">
+function opend(id) {
+    $('#dialog'+id).dialog('open');
+}
+function decision(url){
+    if(confirm('Are you sure you want to delete this ticket?')) location.href = url;
+}
+function voi(url){
+    if(confirm('Are you sure you want to void this ticket?')) location.href = url;
+}
+</script>
+
 <?php echo $this->Paginator->options(array('url' => $this->passedArgs)); ?>
 <h3>Tickets</h3>
 <div class="link">
@@ -53,7 +65,13 @@ www.barnespos.com
             <?php echo $u['Ticket']['dailyid']; ?>
         </td>
 	<td>
-            <?php echo $u['Ticket']['table']; ?>
+            <?php
+	    if ($u['Ticket']['table']=='') {
+		echo '-';
+	    } else {
+		echo $u['Ticket']['table'];
+	    }
+	    ?>
         </td>
 	<td>
             <?php echo $u['User']['full_name']; ?>
@@ -86,39 +104,72 @@ www.barnespos.com
             echo $en; ?>
         </td>
         <td>
-	    <?php if ($en != 'Paid' && $en !='Void') { ?>
-		<?php echo $html->link('Pay',array('controller'=>'payments','action'=>'pay/'.$u['Ticket']['id'])); ?>
-	    <?php } ?>
-            <?php echo $html->link('View',array('action'=>'view/'.$u['Ticket']['id'])); ?>
-            <?php echo $html->link('Edit',array('controller'=>'seats','action'=>'edit/'.$u['Ticket']['id'])); ?>
-	    <?php
+	<?php if ($admin==true) {
+	    echo '<input style="width:70px;height:28px;font-size:1em;margin:0px 4px 0px 0px;" type="button" class="submits" value="View" onclick="parent.location=\'/tickets/view/'.$u['Ticket']['id'].'\'">';
+	    //echo $html->link('View',array('action'=>'view/'.$u['Ticket']['id']));
+	    if ($en != 'Paid' && $en !='Void') {
+		echo '<input style="width:70px;height:28px;font-size:1em;margin:0px 4px 0px 0px;" type="button" class="submits" value="Pay" onclick="parent.location=\'/payments/pay/'.$u['Ticket']['id'].'\'">';
+		//echo $html->link('Pay',array('controller'=>'payments','action'=>'pay/'.$u['Ticket']['id']));
+		echo '<input style="width:70px;height:28px;font-size:1em;margin:0px 4px 0px 0px;" type="button" class="submits" value="Edit" onclick="parent.location=\'/tickets/edit/'.$u['Ticket']['id'].'\'">';
+		//echo $html->link('Edit',array('controller'=>'seats','action'=>'edit/'.$u['Ticket']['id'])); 
+	    }
+	    if (count($u['Seat'])>1) {
+		echo '<input style="width:70px;height:28px;font-size:1em;margin:0px 4px 0px 0px;" type="button" class="submits" value="Split" onclick="parent.location=\'/tickets/split/'.$u['Ticket']['id'].'\'">';
+		//echo $html->link('Split',array('action'=>'split/'.$u['Ticket']['id']));
+	    }
+	    echo '<input style="width:70px;height:28px;font-size:1em;margin:0px 4px 0px 0px;" type="button" class="submits" value="Status" onclick="opend('.$u['Ticket']['id'].')">';
+	} else {
+	    echo $html->link('View',array('action'=>'view/'.$u['Ticket']['id']));
+	    if ($en != 'Paid' && $en !='Void') {
+		echo $html->link('Pay',array('controller'=>'payments','action'=>'pay/'.$u['Ticket']['id']));
+		echo $html->link('Edit',array('controller'=>'seats','action'=>'edit/'.$u['Ticket']['id']));
+	    }
 	    if (count($u['Seat'])>1) {
 		echo $html->link('Split',array('action'=>'split/'.$u['Ticket']['id']));
 	    }
-	    ?>
-	    <?php
-	    if ($all=='0') {
-		echo $html->link(
+	} ?>
+	<script type="text/javascript">
+		$(function(){
+                                // Dialog
+				
+				    $('#dialog<?php echo $u['Ticket']['id']; ?>').dialog({
+					    autoOpen: false,
+					    width: 370,
+					    buttons: {
+						    "Ok": function() { 
+							    $(this).dialog("close"); 
+						    }
+					    }
+				    });
+				});
+	</script>
+	<div id="dialog<?php echo $u['Ticket']['id']; ?>" title="Change Ticket Status - <?php echo $u['Ticket']['dailyid']; ?>">
+	    <?php if ($all=='0') {
+		echo '<input style="width:150px;height:80px;font-size:1em;margin:0px 20px 0px 0px;" type="button" class="submits" value="Void" onclick="voi(\'/tickets/void/'.$u['Ticket']['id'].'/0\')"/>';
+		echo '<input style="width:150px;height:80px;font-size:1em;margin:0px 4px 0px 0px;" type="button" class="submits" value="Delete" onclick="decision(\'/tickets/delete/'.$u['Ticket']['id'].'/0\')">';
+		/*echo $html->link(
 				    'Delete', 
 				    array('controller'=>'tickets','action'=>'delete/'.$u['Ticket']['id'].'/0'), 
 				    null, 
 				    'Are You Sure You Want To Delete This Ticket?'
-			    );
+			    );*/
 	     } else {
-		echo $html->link(
+		echo '<input style="width:150px;height:80px;font-size:1em;margin:0px 20px 0px 0px;" type="button" class="submits" value="Void" onclick="voi(\'/tickets/void/'.$u['Ticket']['id'].'/1\')"/>';
+		echo '<input style="width:150px;height:80px;font-size:1em;margin:0px 4px 0px 0px;" type="button" class="submits" value="Delete" onclick="decision(\'/tickets/delete/'.$u['Ticket']['id'].'/1\')">';
+		/*echo $html->link(
 				'Delete', 
 				array('controller'=>'tickets','action'=>'delete/'.$u['Ticket']['id'].'/1'), 
 				null, 
 				'Are You Sure You Want To Delete This Ticket?'
-			);
-	    }    
-	    ?>
+			);*/
+	    } ?>
+	</div>
         </td>
     </tr>
     <?php } ?>
 </table>
 
-<?php echo $form->end('Combine Tickets'); ?>
+<?php echo $form->end('Combine Selected Tickets'); ?>
 <div class="link" style="text-align:center;width:100%;">
     <!-- Shows the page numbers -->
     <?php echo $this->Paginator->prev('<< Previous', null, null, array('class' => 'disabled')); ?>

@@ -76,6 +76,13 @@ class TicketsController extends AppController {
 			}
 		} elseif ($step=='1') {
 			$t = $this->Ticket->Type->findById($type);
+			if ($table!='') {
+				$this->set('tab',$table);
+				$this->set('value','cont');
+			} else {
+				$this->set('tab','');
+				$this->set('value','check');
+			}
 			//check if it needs seats or table
 			if ($t['Type']['use_seats']=='0' && $t['Type']['use_tables']=='0') {
 				//save now
@@ -118,58 +125,99 @@ class TicketsController extends AppController {
 			}
 		} elseif ($step=='2') {
 			//table is set
-			$t = $this->Ticket->Type->findById($type);
-			if ($t['Type']['use_seats']=='0') {
-				if (!empty($this->data)) {
+			if (!empty($this->data)) {
+				if ($this->data['Ticket']['table']!='') {
+					$f = $this->Ticket->find('count',array('conditions'=>array('Ticket.status <'=>'2','Ticket.table'=>$this->data['Ticket']['table'])));
+					if ($f=='0' || $this->data['Ticket']['cont']=='cont') {
+						$t = $this->Ticket->Type->findById($type);
+						if ($t['Type']['use_seats']=='0') {
+							if ($this->Ticket->find('count')!=0) {
+								$last = $this->Ticket->find('first',array('order'=>'Ticket.created DESC'));
+								$dayid = $last['Ticket']['dailyid']+1;
+							} else {
+								$dayid = 1;
+							}
+							$this->data['Ticket']['type_id']=$type;
+							$this->data['Ticket']['dailyid'] = $dayid;
+							$this->data['Ticket']['user_id'] = $userInfo['User']['id'];
+							if ($this->Ticket->save($this->data)) {
+								$this->Session->setFlash('Ticket Saved.');
+								$num = $this->Ticket->find('first',array('order'=>'Ticket.created DESC','conditions'=>array('Ticket.dailyid'=>$dayid)));
+								$id = $num['Ticket']['id'];
+								$this->redirect(array('controller'=>'seats','action' => 'add/'.$id.'/1'));
+							} else {
+								$this->Session->setFlash('Error: Failed to Save Ticket (tickets,add,2)');
+							}
+						} else {
+							$this->set('step','3');	
+							$this->set('type',$type);
+							$this->set('table',$this->data['Ticket']['table']);
+							include("Mobile_Detect.php");
+							$detect = new Mobile_Detect();
+							if ($detect->isMobile()) {
+								$this->layout = 'ios';
+								$this->render('m.add');
+							}
+						}
+					} else {
+						$this->set('step','2');	
+						$this->set('type',$type);
+						include("Mobile_Detect.php");
+						$detect = new Mobile_Detect();
+						if ($detect->isMobile()) {
+							$this->layout = 'ios';
+							$this->render('m.add');
+						}
+						$this->Session->setFlash('There is already an open ticket at this table.  Click "submit" to continue anyway.');
+						$this->redirect(array('controller'=>'tickets','action' => 'add/1/'.$type.'/'.$this->data['Ticket']['table']));
+					}
+				} else {
+					$this->set('step','2');	
+					$this->set('type',$type);
+					include("Mobile_Detect.php");
+					$detect = new Mobile_Detect();
+					if ($detect->isMobile()) {
+						$this->layout = 'ios';
+						$this->render('m.add');
+					}
+					$this->Session->setFlash('Please enter the table number for this ticket.');
+					$this->redirect(array('controller'=>'tickets','action' => 'add/1/'.$type));
+				}
+			}
+		} elseif ($step=='3') {
+			if (!empty($this->data)) {
+				if ($this->data['Ticket']['seats']!='' && $this->data['Ticket']['seats']>0) {
 					if ($this->Ticket->find('count')!=0) {
 						$last = $this->Ticket->find('first',array('order'=>'Ticket.created DESC'));
 						$dayid = $last['Ticket']['dailyid']+1;
 					} else {
 						$dayid = 1;
 					}
-					$this->data['Ticket']['type_id']=$type;
+					$this->data['Ticket']['type_id'] = $type;
+					$this->data['Ticket']['table'] = $table;
 					$this->data['Ticket']['dailyid'] = $dayid;
 					$this->data['Ticket']['user_id'] = $userInfo['User']['id'];
 					if ($this->Ticket->save($this->data)) {
 						$this->Session->setFlash('Ticket Saved.');
 						$num = $this->Ticket->find('first',array('order'=>'Ticket.created DESC','conditions'=>array('Ticket.dailyid'=>$dayid)));
 						$id = $num['Ticket']['id'];
-						$this->redirect(array('controller'=>'seats','action' => 'add/'.$id.'/1'));
+						$this->redirect(array('controller'=>'seats','action' => 'add/'.$id.'/'.$this->data['Ticket']['seats']));
 					} else {
-						$this->Session->setFlash('Error: Failed to Save Ticket (tickets,add,2)');
+						$this->Session->setFlash('Error: Failed to Save Ticket (tickets,add,3)');
 					}
-				}
-			} else {
-				$this->set('step','3');	
-				$this->set('type',$type);
-				$this->set('table',$this->data['Ticket']['table']);
-				include("Mobile_Detect.php");
-				$detect = new Mobile_Detect();
-				if ($detect->isMobile()) {
-					$this->layout = 'ios';
-					$this->render('m.add');
-				}
-			}	
-		} elseif ($step=='3') {
-			if (!empty($this->data)) {
-				if ($this->Ticket->find('count')!=0) {
-					$last = $this->Ticket->find('first',array('order'=>'Ticket.created DESC'));
-					$dayid = $last['Ticket']['dailyid']+1;
 				} else {
-					$dayid = 1;
-				}
-				$this->data['Ticket']['type_id'] = $type;
-				$this->data['Ticket']['table'] = $table;
-				$this->data['Ticket']['dailyid'] = $dayid;
-				$this->data['Ticket']['user_id'] = $userInfo['User']['id'];
-				if ($this->Ticket->save($this->data)) {
-					$this->Session->setFlash('Ticket Saved.');
-					$num = $this->Ticket->find('first',array('order'=>'Ticket.created DESC','conditions'=>array('Ticket.dailyid'=>$dayid)));
-					$id = $num['Ticket']['id'];
-					$this->redirect(array('controller'=>'seats','action' => 'add/'.$id.'/'.$this->data['Ticket']['seats']));
-				} else {
-					$this->Session->setFlash('Error: Failed to Save Ticket (tickets,add,3)');
-				}
+						$this->set('step','3');	
+						$this->set('type',$type);
+						$this->set('table',$table);
+						include("Mobile_Detect.php");
+						$detect = new Mobile_Detect();
+						if ($detect->isMobile()) {
+							$this->layout = 'ios';
+							$this->render('m.add');
+						}
+						$this->Session->setFlash('Please enter the number of seats for this ticket.');
+						$this->redirect(array('controller'=>'tickets','action' => 'add/2/'.$type.'/'.$table));
+				}	
 			}	
 		}
 	}
@@ -360,9 +408,10 @@ class TicketsController extends AppController {
         }
     
 	function delete($id,$redirect=null) {
+		//check auth status
 		$userinfo = $this->Auth->user();
 		if ($userinfo['User']['level']!='1') {
-			$this->redirect(array('controller'=>'pages','action' => 'home'));
+			$this->redirect(array('controller'=>'users','action' => 'quick_in'));
 			$this->Session->setFlash('You Do Not Have Permission To Access This Page');
 		}
 		$this->Ticket->delete($id);
@@ -382,6 +431,32 @@ class TicketsController extends AppController {
 			$this->redirect(array('action'=>'index'));	
 		} else {
 			$this->redirect(array('action'=>'index/all'));
+		}
+	}
+	
+	function void($id,$redirect=null) {
+		//check auth status
+		$userinfo = $this->Auth->user();
+		if ($userinfo['User']['level']!='1') {
+			$this->redirect(array('controller'=>'users','action' => 'quick_in'));
+			$this->Session->setFlash('You Do Not Have Permission To Access This Page');
+		}
+		
+		$this->Ticket->id = $id;
+		if ($this->Ticket->saveField('status','3')) {
+			$this->Session->setFlash('Ticket Successfully Voided.');
+			if ($redirect==null || $redirect=='0') {
+				$this->redirect(array('action'=>'index'));	
+			} else {
+				$this->redirect(array('action'=>'index/all'));
+			}	
+		} else {
+			$this->Session->setFlash('Error saving ticket status (tickets,void)');
+			if ($redirect==null || $redirect=='0') {
+				$this->redirect(array('action'=>'index'));	
+			} else {
+				$this->redirect(array('action'=>'index/all'));
+			}
 		}
 	}
 	

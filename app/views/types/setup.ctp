@@ -50,8 +50,9 @@ www.barnespos.com
     
         <?php echo $form->create('Type', array('action' => 'setup')); ?>
         <tr><td style="text-align:right;font-size:80%;">Name: </td><td><?php echo $form->input('name', array( 'label' => '')); ?></td></tr>
-        <tr><td style="text-align:right;font-size:80%;">Enable: </td><td><?php echo $form->input('enable', array( 'label' => '')); ?></td></tr>
+        <tr><td style="text-align:right;font-size:80%;">Enable: </td><td><?php echo $form->input('enable', array( 'label' => '','checked'=>true)); ?></td></tr>
         <tr><td style="text-align:right;font-size:80%;">Use Seats: </td><td><?php echo $form->input('use_seats', array( 'label' => '')); ?></td></tr>
+	<tr><td style="text-align:right;font-size:80%;">Use Tables: </td><td><?php echo $form->input('use_tables', array( 'label' => '')); ?></td></tr>
         <tr><td></td><td>
         <?php echo $form->end('Add Order Type'); ?>
         <br/>
@@ -68,6 +69,9 @@ www.barnespos.com
                 </th>
                 <th>
                     <?php echo $this->Paginator->sort('Use Seats', 'Type.use_seats'); ?>
+                </th>
+		<th>
+                    <?php echo $this->Paginator->sort('Use Tables', 'Type.use_tables'); ?>
                 </th>
                 <th>
                     Action
@@ -108,6 +112,21 @@ www.barnespos.com
                     }
                     echo $ef; ?>
                 </td>
+		<td>
+				<?php
+				switch ($u['Type']['use_tables']) {
+				    case 1:
+					$ef = 'yes';
+					break;
+				    case 0:
+					$ef = 'no';
+					break;
+				    default:
+					$ef = 'no';
+					break;
+				}
+				echo $ef; ?>
+                </td>
                 <td>
                     <script type="text/javascript">
                         $(function(){
@@ -125,7 +144,7 @@ www.barnespos.com
                                         });
                     </script>
                     
-                    <a href="#" onclick="opend(<?php echo $u['Type']['id']; ?>)">View</a>
+                    <?php echo '<input style="width:70px;height:28px;font-size:1em;margin:0px 4px 0px 0px;" type="button" class="submits" value="View" onclick="opend('.$u['Type']['id'].')">'; ?>
                     <!--this div is what comes up when you click "view"-->
                         <div id="dialog<?php echo $u['Type']['id']; ?>" title="<?php echo $u['Type']['name']; ?>">
                             <table>
@@ -142,6 +161,15 @@ www.barnespos.com
                                     } ?>
                                     </td>
                                 </tr>
+				<tr>
+								<td><b>Use Tables</b></td>
+								<td><?php if ($u['Type']['use_tables']==1) {
+								    echo 'yes';
+								} else {
+								    echo 'no';
+								} ?>
+								</td>
+				</tr>
                                 <tr>
                                     <td><b>Enabled</b></td>
                                     <td><?php if ($u['Type']['enable']==1) {
@@ -153,14 +181,23 @@ www.barnespos.com
                                 </tr>
                             </table>
                         </div>
+			<SCRIPT type="text/javascript">
+				function decision(url){
+				    if(confirm('Deleting this ticket type may corrupt existing tickets and records of this type.  It is recommended that you uncheck "enable" rather than delete this ticket type, unless it was created in error.  Are you sure you want to delete this ticket type?')) location.href = url;
+				}
+				</SCRIPT>
+		<?php
+		echo '<input style="width:70px;height:28px;font-size:1em;margin:0px 4px 0px 0px;" type="button" class="submits" value="Edit" onclick="parent.location=\'/types/edit/'.$u['Type']['id'].'/1\'">';
+		echo '<input style="width:70px;height:28px;font-size:1em;margin:0px 4px 0px 0px;" type="button" class="submits" value="Delete" onclick="decision(\'/types/delete/'.$u['Type']['id'].'/1\')">';
+		?>
                         
-                    <?php echo $html->link('Edit',array('action'=>'edit/'.$u['Type']['id'].'/1')); ?>
-                    <?php echo $html->link(
+                    <?php //echo $html->link('Edit',array('action'=>'edit/'.$u['Type']['id'].'/1')); ?>
+                    <?php /*echo $html->link(
                                         'Delete', 
                                         array('controller'=>'types','action'=>'delete/'.$u['Type']['id'].'/1'), 
                                         null, 
                                         'Are You Sure You Want To Delete This Ticket Type?'
-                                ); ?>
+                                );*/ ?>
                 </td>
             </tr>
             <?php } ?>

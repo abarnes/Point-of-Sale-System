@@ -37,7 +37,8 @@ function clr(type){
     <div class="label">
     <?php echo $form->create('Ticket', array('action' => 'add/2/'.$type)); ?>
     <?php echo $form->input('Ticket.type_id', array( 'label' => 'Order Type','type'=>'hidden','value'=>$type)); ?>
-    <?php echo $form->input('Ticket.table', array( 'label' => 'Table')); ?>
+    <?php echo $form->input('Ticket.table', array( 'label' => 'Table','value'=>$tab)); ?>
+    <?php echo $form->input('Ticket.cont', array( 'type'=>'hidden','value'=>$value)); ?>
     <?php echo $form->end('Submit'); ?>
     </div>
     
@@ -71,7 +72,7 @@ function clr(type){
     <div class="label">
     <?php echo $form->create('Ticket', array('action' => 'add/3/'.$type.'/'.$table)); ?>
     <?php echo $form->input('Ticket.type_id', array( 'label' => 'Order Type','type'=>'hidden','value'=>$type)); ?>
-    <?php echo $form->input('Ticket.seats', array( 'label' => 'Number of Seats')); ?>
+    <?php echo $form->input('Ticket.seats', array( 'label' => 'Number of Seats','maxlength'=>'2')); ?>
     <?php echo $form->end('Submit'); ?>
     </div>
     

@@ -159,7 +159,7 @@ www.barnespos.com
 				});
 	    </script>
 	    
-	    <a href="#" onclick="opend(<?php echo $u['Payment']['id']; ?>)">Payment Details</a>
+	    <?php echo '<input style="width:120px;height:28px;font-size:1em;margin:0px 4px 0px 0px;" type="button" class="submits" value="Payment Details" onclick="opend('.$u['Payment']['id'].')">'; ?>
 	    <!--this div is what comes up when you click "view"-->
 		<div id="dialog<?php echo $u['Payment']['id']; ?>" title="Payment Details">
 		    <table>
@@ -202,7 +202,10 @@ www.barnespos.com
 
 		    </table>
 		</div>
-            <?php echo $html->link('View Ticket',array('controller'=>'tickets','action'=>'record_view/'.$u['Payment']['ticket_id'].'/payments')); ?>
+		<?php
+		echo '<input style="width:100px;height:28px;font-size:1em;margin:0px 4px 0px 0px;" type="button" class="submits" value="View Ticket" onclick="parent.location=\'/tickets/record_view/'.$u['Payment']['ticket_id'].'\'">';
+		?>
+            <?php //echo $html->link('View Ticket',array('controller'=>'tickets','action'=>'record_view/'.$u['Payment']['ticket_id'].'/payments')); ?>
         </td>
     </tr>
     <?php } ?>
