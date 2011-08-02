@@ -31,6 +31,9 @@ www.barnespos.com
             <?php echo $this->Paginator->sort('Table', 'Ticket.table'); ?>
         </th>
 	<th>
+            <?php echo $this->Paginator->sort('Server', 'User.full_name'); ?>
+        </th>
+	<th>
             <?php echo $this->Paginator->sort('Type', 'Type.name'); ?>
         </th>
         <th>
@@ -51,6 +54,9 @@ www.barnespos.com
         </td>
 	<td>
             <?php echo $u['Ticket']['table']; ?>
+        </td>
+	<td>
+            <?php echo $u['User']['full_name']; ?>
         </td>
 	<td>
             <?php echo $u['Type']['name']; ?>
