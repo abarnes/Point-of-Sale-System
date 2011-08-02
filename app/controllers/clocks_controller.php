@@ -105,64 +105,11 @@ class ClocksController extends AppController {
 		}
 		$this->set('user',$this->User->findById($id));
 		
-		if ($redirect==null || $redirect=='0') {
-			$this->set('red','0');
-		} else {
-			if ($index=='2') {
-				$this->set('red','1');
-			} else {
-				$this->set('red','2');
-			}
-		}
-		if (!empty($this->data)) {
-			//die(print_r($this->data));
-			$conditions = array('Clock.complete'=>'1','Clock.user_id'=>$id);
-			
-			if (strlen($this->data['Clock']['startdate'])<9 || strlen($this->data['Clock']['enddate'])<9) {
-				$this->Session->setFlash('Invalid data parameters given.');
-				$this->redirect(array('controller'=>'clocks','action'=>'report_all'));
-			}
-			
-			if(strtotime($this->data['Clock']['startdate'])<=strtotime($this->data['Clock']['enddate'])) {
-				$shiftc = array('Clock.complete'=>'1');
-				if ($this->data['Clock']['startdate']==$this->data['Clock']['enddate']) {
-					$conditions['Clock.created BETWEEN ? AND ?']=array(date('Y-m-d',strtotime($this->data['Clock']['startdate'])),date('Y-m-d',strtotime($this->data['Clock']['startdate'])+86400));
-					$seats = $this->Ticket->find('all',array('conditions'=>array('Ticket.status >'=>'1','Ticket.user_id'=>$id,'Ticket.created BETWEEN ? AND ?'=>array(date('Y-m-d',strtotime($this->data['Clock']['startdate'])),date('Y-m-d',strtotime($this->data['Clock']['startdate'])+86400)))));
-				} else {
-					$conditions['Clock.created BETWEEN ? AND ?']=array(date('Y-m-d',strtotime($this->data['Clock']['startdate'])),date('Y-m-d',strtotime($this->data['Clock']['enddate'])));
-					$seats = $this->Ticket->find('all',array('conditions'=>array('Ticket.status >'=>'1','Ticket.user_id'=>$id,'Ticket.created BETWEEN ? AND ?'=>array(date('Y-m-d',strtotime($this->data['Clock']['startdate'])),date('Y-m-d',strtotime($this->data['Clock']['enddate']))))));
-				}
-			} else {
-				//end date before start date
-				$this->Session->setFlash('Invalid date parameters given.');
-				$this->redirect(array('controller'=>'clocks','action'=>'report_all'));
-			}
-			
-			$this->paginate = array('limit' => 20,'conditions'=>$conditions);
-			$clocks = $this->paginate('Clock');
-			
-			//add data for shifts, hours
-			$i=0;
-			$total_time=0;
-			$total_cost = 0;
-			foreach ($clocks as $a) {
-				$diff = strtotime($a['Clock']['out'])-strtotime($a['Clock']['in']);
-				$total_time = $total_time+$diff;
-				
-				$clocks[$i]['Clock']['time']=$this->_timeBetween(strtotime($a['Clock']['in']),strtotime($a['Clock']['out']));
-				$clocks[$i]['Clock']['cst']=$a['Clock']['cost'];
-				$total_cost = $total_cost+$a['Clock']['cost'];
-				$i++;
-			}
-			
-			$this->set('start',$this->data['Clock']['startdate']);
-			$this->set('end',$this->data['Clock']['enddate']);
-		} else {
 			$conditions = array('Clock.complete'=>'1','Clock.user_id'=>$id,'Clock.created >'=>date('Y-m-d', strtotime("-2 weeks")));
 			$this->paginate = array('limit' => 20,'conditions'=>$conditions);
 			$clocks = $this->paginate('Clock');
 			
-			$seats = $this->Ticket->find('all',array('conditions'=>array('Ticket.user_id'=>$id,'Ticket.status >'=>'1','Ticket.created BETWEEN ? AND ?'=>array(date('Y-m-d',strtotime('-2 weeks')),date('Y-m-d',time())))));
+			$seats = $this->Ticket->find('all',array('conditions'=>array('Ticket.user_id'=>$id,'Ticket.status >'=>'1','Ticket.created >'=>date('Y-m-d',time()))));
 			
 			//add data for shifts, hours
 			$i=0;
@@ -177,10 +124,6 @@ class ClocksController extends AppController {
 				$total_cost = $total_cost+$a['Clock']['cost'];
 				$i++;
 			}
-			
-			$this->set('start',date('m/d/Y',strtotime('-2 weeks')));
-			$this->set('end',date('m/d/Y',time()));
-		}
 		
 		//calculate sales statistics, etc.
 		$total = 0;

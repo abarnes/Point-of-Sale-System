@@ -29,34 +29,12 @@ www.barnespos.com
 </script>
 
 <?php echo $this->Paginator->options(array('url' => $this->passedArgs)); ?>
-<h3><?php echo $user['User']['full_name']; ?> - <?php echo $start.' to '.$end; ?></h3>
+<h3><?php echo $user['User']['full_name']; ?> - <?php echo date('n-j-Y'); ?></h3>
 
 <div class="link">
-<?php if ($red=='1') {				
-				echo $html->link('<< Users',array('controller'=>'users','action'=>'index'));
-} elseif ($red=='2') {
-				echo $html->link('<< Daily Statistics',array('controller'=>'clocks','action'=>'index/all'));
-} else {
-				echo $html->link('<< Shifts',array('controller'=>'clocks','action'=>'report_all'));
-}?>
+<?php echo $html->link('<< Menu',array('controller'=>'pages','action'=>'menu')); ?>
 <br/><br/>
 </div>
-
-<a style="float:left;margin-bottom:8px;margin-right:5px;" href="#" onclick="openadd()"><input type="button" class="submits" value="Filter"></a>
-
-<div id="filter" title="Filter Records">
-    <script>
-	$(function() {
-		$( "#ClockStartdate" ).datepicker();
-		$( "#ClockEnddate" ).datepicker();
-	});
-    </script>
-    <?php echo $form->create('Clock', array('action' => 'report/'. $user['User']['id'].'/'.$red)); ?>
-    <?php echo $form->input('startdate', array( 'label' => 'Start Date: ','value'=>$start)); ?>
-    <?php echo $form->input('enddate', array( 'label' => 'End Date: ','value'=>$end)); ?>
-</div>
-
-<p>Filter results by using the "Filter" button.</p>
 
 
 <table style="width:45%;">
