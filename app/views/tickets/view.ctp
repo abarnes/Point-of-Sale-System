@@ -33,12 +33,14 @@ function spl(id){
 </script>
 
 <ul class="horiz_list" style="text-align:center;">
+	<li><input onclick="parent.location='/tickets/index'" type="button" value="Back to Tickets" style="width:120px;font-size:1em;height:30px;margin:2px;" class="submits"></li>
 	<li><input onclick="parent.location='/seats/edit/<?php echo $ticket['Ticket']['id']; ?>'" type="button" value="Edit" style="width:80px;font-size:1em;height:30px;margin:2px;" class="submits"></li>
 	<li><input onclick="del('<?php echo $ticket['Ticket']['id']; ?>')" type="button" value="Delete" style="width:80px;font-size:1em;height:30px;margin:2px;" class="submits"></li>
 	<?php if (count($seats)>1) { ?>
 	    <li><input onclick="parent.location='/tickets/split/<?php echo $ticket['Ticket']['id']; ?>'" type="button" value="Split" style="width:80px;font-size:1em;height:30px;margin:2px;" class="submits"></li>
 	    <li><input onclick="spl('<?php echo $ticket['Ticket']['id']; ?>')" type="button" value="Split Individually" style="width:125px;font-size:1em;height:30px;margin:2px;" class="submits"></li>
 	<?php } ?>
+	<li><input onclick="parent.location='/payments/pay/<?php echo $ticket['Ticket']['id']; ?>'" type="button" value="Pay" style="width:80px;font-size:1em;height:30px;margin:2px;" class="submits"></li>
 </ul>
 <?php } else { ?>
 <script type="text/javascript">
@@ -56,7 +58,7 @@ function del(id){
 </ul>
 <?php } ?>
 <br/>
-    
+    <h3>Ticket Info</h3>
 <table>
     <tr>
         <td>ID</td>
@@ -142,6 +144,7 @@ function del(id){
 
 
 <div style="float:right;width:58%;margin-right:50px;">
+	<h3>Order</h3>
     <?php foreach ($seats as $s) { ?>
     <table>
 	<tr>

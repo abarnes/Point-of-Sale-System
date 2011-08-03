@@ -22,7 +22,7 @@ www.barnespos.com
 		
 		<title>Barnes POS System</title>
 		
-		<?php echo $html->css('cake.generic'); ?>
+		<?php echo $html->css('cakeorig'); ?>
 		<?php echo $html->css('customstyle'); ?>
 		<?php echo $html->css('keyboard'); ?>
 		<?php echo $html->css('smoothness/jquery-ui-1.8.9.custom'); ?>

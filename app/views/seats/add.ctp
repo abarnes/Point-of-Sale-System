@@ -10,6 +10,9 @@ www.barnespos.com
 ------------------------------------------------------------------------------->
 
 <script type="text/javascript">
+$(document).ready(function(){	
+	$('#all').fadeIn(900);
+});
                                 $(function(){
                                 // Dialog			
 				$('#editform').dialog({
@@ -32,6 +35,9 @@ www.barnespos.com
 				});
                             });
 </script>
+
+<div id="all" style="display:none;">
+
 <div id="editform" title="Update Ticket Details">
 <?php echo $form->create('Ticket', array('action' => 'edit/'.$ticket['Ticket']['id'].'/'.$seats)); ?>
     <?php echo $form->input('Ticket.table', array( 'label' => 'Table: ','value'=>$ticket['Ticket']['table'])); ?>
@@ -347,9 +353,11 @@ $c++;
 } ?>
 
 <?php //echo $form->end('Submit'); ?>
-<a style="vertical-align:bottom;margin-left:0px;margin-right:20px;" href="#" onclick="submitform()"><input style="width:100%;margin-right:0px;" type="button" class="submits" value="Submit"></a>
+<a style="vertical-align:bottom;margin-left:0px;margin-right:20px;" href="#" onclick="submitform()"><input style="width:100%;margin-right:0px;height:44px;" type="button" class="submits" value="Submit"></a>
 </div>
 
+
+</div>
 <!----------------javascript global functions (open link, add without mods, remove)----------------->
 <script type="text/javascript">
 			var newt;

@@ -176,8 +176,12 @@ class PaymentsController extends AppController {
 				$seats[$se]['seat'] = $se;
 				$seats[$se]['orig_seat'] = $or;
 				$sp = explode('.',$t['Seat']['total']);
-				if (strlen($sp[1])==1) {
-					$pr = $pr.'0';
+				if (isset($sp[1])) {
+					if (strlen($sp[1])==1) {
+						$pr = $pr.'0';
+					}
+				} else {
+					$pr = $pr.'.00';
 				}
 				$seats[$se]['total'] = $pr;
 				
@@ -229,8 +233,12 @@ class PaymentsController extends AppController {
 						}
 						
 						$sp = explode('.',$p);
-						if (strlen($sp[1])==1) {
-							$p = $p.'0';
+						if (isset($sp[1])) {
+							if (strlen($sp[1])==1) {
+								$p = $p.'0';
+							}
+						} else {
+							$p = $p.'.00';
 						}
 						//put array together
 						$append=array($items[$th]=>array('mods'=>$test,'price'=>$p));
@@ -241,8 +249,12 @@ class PaymentsController extends AppController {
 			}
 			//format the total
 			$sp = explode('.',$total);
-			if (strlen($sp[1])==1) {
-				$total = $total.'0';
+			if (isset($sp[1])) {
+				if (strlen($sp[1])==1) {
+					$total = $total.'0';
+				}
+			} else {
+				$total = $total.'.00';
 			}
 			
 			$rate = $find['Setting']['tax']/100;

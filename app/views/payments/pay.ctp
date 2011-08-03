@@ -13,17 +13,33 @@ www.barnespos.com
 $tax=$total*$s['tax']/100;
 $tax = round($tax,'2');
 $ntotal = $tax+$total;
+$sp = explode('.',$ntotal);
+if (isset($sp[1])) {
+				if (strlen($sp[1])==1) {
+								$ntotal = $ntotal.'0';
+				}
+} else {
+				$ntotal = $ntotal.'.00';
+}
 $fifteen = $ntotal*.15;
 $fifteen = round($fifteen,'2');
 $sp = explode('.',$fifteen);
-if (strlen($sp[1])==1) {
-				$fifteen = $fifteen.'0';
+if (isset($sp[1])) {
+				if (strlen($sp[1])==1) {
+								$fifteen = $fifteen.'0';
+				}
+} else {
+				$fifteen = $fifteen.'.00';
 }
 $twenty = $ntotal*.2;
 $twenty = round($twenty,'2');
 $sp = explode('.',$twenty);
-if (strlen($sp[1])==1) {
-				$twenty = $twenty.'0';
+if (isset($sp[1])) {
+				if (strlen($sp[1])==1) {
+								$twenty = $twenty.'0';
+				}
+} else {
+				$twenty = $twenty.'.00';
 }
 ?>
 
@@ -372,7 +388,7 @@ function remo(num,str) {
 				}
 				</script>
 			<br/>
-			<a style="vertical-align:bottom;margin-left:0px;" href="#" onclick="submitfr()"><input style="width:650px;" type="button" class="submits" value="Submit"></a>
+			<a style="vertical-align:bottom;margin-left:0px;" href="#" onclick="submitfr()"><input style="width:650px;height:44px;" type="button" class="submits" value="Submit"></a>
 	</div>
 </td><td style="background-color:transparent;border-color:transparent;">
 <!--</div>-->

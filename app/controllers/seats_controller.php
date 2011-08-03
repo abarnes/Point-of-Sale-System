@@ -123,6 +123,7 @@ class SeatsController extends AppController {
 	function edit($id) {
             $this->layout = 'noheader';
 		$ticket = $this->Ticket->findById($id);
+                
 		$find = $this->Seat->find('all',array('conditions'=>array('Seat.ticket_id'=>$id),'order'=>'Seat.seat ASC'));
 		$num = count($find);
 		
@@ -203,6 +204,10 @@ class SeatsController extends AppController {
 				$this->Seat->save($dat);
 				$this->Seat->id = false;
 				
+                                //unlock ticket
+                                $this->Ticket->id = $ticket['Ticket']['id'];
+                                $this->Ticket->saveField('lock','0');
+                                
 				//print new stuff
 				$diff[$old_pull['Seat']['seat']] = array_diff($new,$old);
 				
@@ -215,6 +220,17 @@ class SeatsController extends AppController {
 			$this->Session->setFlash('Ticket Updated.');
 			$this->redirect(array('controller'=>'tickets','action' => 'index'));
 		} else {
+                    //check for lock
+                    $diff = time()-strtotime($ticket['Ticket']['modified']);
+                    if ($ticket['Ticket']['lock']=='1' && $diff<=100) {
+                        $this->Session->setFlash('This ticket is currently locked.');
+                        $this->redirect(array('controller'=>'tickets','action' => 'index'));
+                    }
+                    
+                    //lock ticket
+                    $this->Ticket->id = $ticket['Ticket']['id'];
+                    $this->Ticket->saveField('lock','1');
+                    
 			$this->set('id',$id);
 			$this->set('seats',$num);
 			$this->set('types', $this->Ticket->Type->find('list',array('order'=>'Type.name ASC','conditions'=>array('Type.enable'=>'1'))));

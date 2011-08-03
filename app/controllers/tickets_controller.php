@@ -96,7 +96,7 @@ class TicketsController extends AppController {
 				$this->data['Ticket']['dailyid'] = $dayid;
 				$this->data['Ticket']['user_id'] = $userInfo['User']['id'];
 				if ($this->Ticket->save($this->data)) {
-					$this->Session->setFlash('Ticket Saved.');
+					//$this->Session->setFlash('Ticket Saved.');
 					$num = $this->Ticket->find('first',array('order'=>'Ticket.created DESC','conditions'=>array('Ticket.dailyid'=>$dayid)));
 					$id = $num['Ticket']['id'];
 					$this->redirect(array('controller'=>'seats','action' => 'add/'.$id.'/1'));
@@ -141,7 +141,7 @@ class TicketsController extends AppController {
 							$this->data['Ticket']['dailyid'] = $dayid;
 							$this->data['Ticket']['user_id'] = $userInfo['User']['id'];
 							if ($this->Ticket->save($this->data)) {
-								$this->Session->setFlash('Ticket Saved.');
+								//$this->Session->setFlash('Ticket Saved.');
 								$num = $this->Ticket->find('first',array('order'=>'Ticket.created DESC','conditions'=>array('Ticket.dailyid'=>$dayid)));
 								$id = $num['Ticket']['id'];
 								$this->redirect(array('controller'=>'seats','action' => 'add/'.$id.'/1'));
@@ -198,7 +198,7 @@ class TicketsController extends AppController {
 					$this->data['Ticket']['dailyid'] = $dayid;
 					$this->data['Ticket']['user_id'] = $userInfo['User']['id'];
 					if ($this->Ticket->save($this->data)) {
-						$this->Session->setFlash('Ticket Saved.');
+						//$this->Session->setFlash('Ticket Saved.');
 						$num = $this->Ticket->find('first',array('order'=>'Ticket.created DESC','conditions'=>array('Ticket.dailyid'=>$dayid)));
 						$id = $num['Ticket']['id'];
 						$this->redirect(array('controller'=>'seats','action' => 'add/'.$id.'/'.$this->data['Ticket']['seats']));
@@ -399,10 +399,10 @@ class TicketsController extends AppController {
         
         function inc_delete($id) {
             if ($this->Ticket->delete($id)) {
-                $this->Session->setFlash('Ticket Successfully Deleted.');
+                $this->Session->setFlash('Ticket Successfully Cancelled.');
 		$this->redirect(array('action'=>'index'));
             } else {
-                $this->Session->setFlash('Error Deleting Ticket (tickets,inc_delete');
+                $this->Session->setFlash('Error Canceling Ticket (tickets,inc_delete');
 		$this->redirect(array('action'=>'index'));
             }
         }
@@ -444,7 +444,7 @@ class TicketsController extends AppController {
 		
 		$this->Ticket->id = $id;
 		if ($this->Ticket->saveField('status','3')) {
-			$this->Session->setFlash('Ticket Successfully Voided.');
+			$this->Session->setFlash('Ticket Voided.');
 			if ($redirect==null || $redirect=='0') {
 				$this->redirect(array('action'=>'index'));	
 			} else {
@@ -452,6 +452,32 @@ class TicketsController extends AppController {
 			}	
 		} else {
 			$this->Session->setFlash('Error saving ticket status (tickets,void)');
+			if ($redirect==null || $redirect=='0') {
+				$this->redirect(array('action'=>'index'));	
+			} else {
+				$this->redirect(array('action'=>'index/all'));
+			}
+		}
+	}
+	
+	function uvoid($id,$redirect=null) {
+		//check auth status
+		$userinfo = $this->Auth->user();
+		if ($userinfo['User']['level']!='1') {
+			$this->redirect(array('controller'=>'users','action' => 'quick_in'));
+			$this->Session->setFlash('You Do Not Have Permission To Access This Page');
+		}
+		
+		$this->Ticket->id = $id;
+		if ($this->Ticket->saveField('status','0')) {
+			$this->Session->setFlash('Ticket status reverted to submitted.');
+			if ($redirect==null || $redirect=='0') {
+				$this->redirect(array('action'=>'index'));	
+			} else {
+				$this->redirect(array('action'=>'index/all'));
+			}	
+		} else {
+			$this->Session->setFlash('Error saving ticket status (tickets,uvoid)');
 			if ($redirect==null || $redirect=='0') {
 				$this->redirect(array('action'=>'index'));	
 			} else {
@@ -745,9 +771,16 @@ class TicketsController extends AppController {
 		$ticket = $this->Ticket->findById($id);
 		//check status
 		if ($ticket['Ticket']['status']>1) {
-			$this->Session->setFlash('Error: This ticket has already been paid of is otherwise void.');
+			$this->Session->setFlash('Error: This ticket has already been paid or is otherwise void.');
 			$this->redirect(array('controller'=>'tickets','action' => 'index'));
 		}
+                
+                //check for lock
+                $diff = time()-strtotime($ticket['Ticket']['modified']);
+                if ($ticket['Ticket']['lock']=='1' && $diff<=100) {
+                    $this->Session->setFlash('This ticket is currently locked.');
+                    $this->redirect(array('controller'=>'tickets','action' => 'index'));
+                }
 		
 		//set new variables
 		$orig_id = $ticket['Ticket']['id'];
@@ -772,12 +805,13 @@ class TicketsController extends AppController {
 			$newdata['Ticket']['table'] = $table;
 			$newdata['Ticket']['type_id'] = $type;
 			$newdata['Ticket']['dailyid'] = $dayid;
+                        $newdata['Ticket']['lock'] = '0';
 			$this->Ticket->save($newdata);
 			$this->Ticket->id = false;
 			
 			$get = $this->Ticket->find('first',array('order'=>'Ticket.created DESC','conditions'=>array('Ticket.original_id'=>$orig_id,'Ticket.original_daily_id'=>$orig_daily,'Ticket.user_id'=>$user_id)));;
 			$newticket = $get['Ticket']['id'];
-			$tics[] = $get['Ticket']['dailyid'];
+			$tics[] = $dayid;
 			
 			//update seat
 			$newseat = array();
@@ -808,6 +842,13 @@ class TicketsController extends AppController {
 		$this->set('seatnum',$this->Ticket->Seat->find('count',array('conditions'=>array('Seat.ticket_id'=>$id))));
 		
 		$ticket = $this->Ticket->findById($id);
+                
+                //check status
+		if ($ticket['Ticket']['status']>1) {
+			$this->Session->setFlash('Error: This ticket has already been paid or is otherwise void.');
+			$this->redirect(array('controller'=>'tickets','action' => 'index'));
+		}
+                
 		$oid = $ticket['Ticket']['dailyid'];
 		$items = $this->Item->find('list',array('fields'=>array('Item.name')));
 		$price = $this->Item->find('list',array('fields'=>array('Item.price')));
@@ -832,9 +873,14 @@ class TicketsController extends AppController {
 			$seats[$se]['seat'] = $se;
 			$seats[$se]['orig_seat'] = $or;
 			$sp = explode('.',$t['Seat']['total']);
-			if (strlen($sp[1])==1) {
-				$pr = $pr.'0';
+			if (isset($sp[1])) {
+				if (strlen($sp[1])==1) {
+					$pr = $pr.'0';
+				}
+			} else {
+				$pr = $pr.'.00';
 			}
+
 			$seats[$se]['total'] = $pr;
 			
 			$newt = rtrim($t['Seat']['items'],',');
@@ -885,8 +931,12 @@ class TicketsController extends AppController {
 						}
 					
 					$sp = explode('.',$p);
-					if (strlen($sp[1])==1) {
-						$p = $p.'0';
+					if (isset($sp[1])) {
+						if (strlen($sp[1])==1) {
+							$p = $p.'0';
+						}
+					} else {
+						$p = $p.'.00';
 					}
 					//put array together
 					$append=array($items[$th]=>array('mods'=>$test,'price'=>$p));
@@ -897,8 +947,12 @@ class TicketsController extends AppController {
 		}
 		//format the total
 		$sp = explode('.',$total);
-		if (strlen($sp[1])==1) {
-			$total = $total.'0';
+		if (isset($sp[1])) {
+			if (strlen($sp[1])==1) {
+				$total = $total.'0';
+			}
+		} else {
+			$p = $p.'.00';
 		}
 
 		$this->set('total',$total);
@@ -936,6 +990,7 @@ class TicketsController extends AppController {
 					$newdata['Ticket']['status'] = $status;
 					$newdata['Ticket']['table'] = $table;
 					$newdata['Ticket']['type_id'] = $type;
+                                        $newdata['Ticket']['lock'] = '0';
 					$newdata['Ticket']['dailyid'] = $dayid;
 					$this->Ticket->save($newdata);
 					$this->Ticket->id = false;
@@ -971,7 +1026,18 @@ class TicketsController extends AppController {
 				$this->Session->setFlash('Error: Could not delete original ticket.');
 				$this->redirect(array('controller'=>'tickets','action' => 'index'));
 			}
-		}
+		} else {
+                    //check for lock
+                    $diff = time()-strtotime($ticket['Ticket']['modified']);
+                    if ($ticket['Ticket']['lock']=='1' && $diff<=100) {
+                        $this->Session->setFlash('This ticket is currently locked.');
+                        $this->redirect(array('controller'=>'tickets','action' => 'index'));
+                    }
+                        
+                    //lock ticket
+                    $this->Ticket->id = $ticket['Ticket']['id'];
+                    $this->Ticket->saveField('lock','1');
+                }
 		
 	}
 	
@@ -1012,6 +1078,18 @@ class TicketsController extends AppController {
 			$this->Ticket->delete($a['Ticket']['id'],true);
 		}
 	}
+        
+        function unlock_red($id,$url=null) {
+            //unlock a ticket and redirect
+            $this->Ticket->id = $id;
+            $this->Ticket->saveField('lock','0');
+            
+            if ($url!=null) {
+                $this->redirect($url);
+            } else {
+                exit();
+            }
+        }
 	
 	/*
 	function printticket($id,$PRN=null) {
