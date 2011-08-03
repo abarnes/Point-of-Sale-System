@@ -65,5 +65,3 @@ www.barnespos.com
         <p>Checking this box allows the employee to clock in.  If the employee no longer works here, you may uncheck this box to disable the employee's access to the system without corrupting any records.</p>
         <br/><br/>
     </div>
-
-    
