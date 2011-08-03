@@ -15,6 +15,13 @@ function submitform() {
 }
 </script>
 
+<script type="text/javascript">
+$(document).ready(function(){	
+	$('#all').fadeIn(600);
+});
+</script>
+<div id="all" style="display:none">
+
 
 <h3>Setup Utility -- General Settings</h3>
 <p>Please set the general settings for your system here before proceeding.</p><br/>
@@ -94,4 +101,6 @@ function submitform() {
 <a style="float:left;vertical-align:bottom;margin-left:10px;" href="/users/setup"><input type="button" class="submits" value="Previous"></a>
 <a style="float:right;vertical-align:bottom;margin-right:10px;" href="#" onclick="submitform()"><input type="button" class="submits" value="Next"></a>
 <br/><br/><br/>
+</div>
+
 </div>

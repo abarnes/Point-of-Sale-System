@@ -8,6 +8,13 @@ You may alter this code with the following limitations:
 Barnes POS Systems
 www.barnespos.com
 ------------------------------------------------------------------------------->
+<script type="text/javascript">
+$(document).ready(function(){	
+	$('#all').fadeIn(500);
+});
+</script>
+<div id="all" style="display:none">
+
 <h3>Admin Panel</h3>
 
 <br/>
@@ -29,5 +36,5 @@ www.barnespos.com
 <input onclick="parent.location='/settings/edit'" type="button" value="General Settings" style="width:150px;font-size:1em;height:100px;" class="submits">
 <input onclick="parent.location='/tickets/record_index'" type="button" value="Ticket Records" style="width:150px;font-size:1em;height:100px;" class="submits">
 <input onclick="parent.location='/pages/setup'" type="button" value="Setup Utility" style="width:150px;font-size:1em;height:100px;" class="submits">
-
-				
+			
+</div>

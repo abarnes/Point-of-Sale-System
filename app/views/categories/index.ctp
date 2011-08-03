@@ -31,6 +31,13 @@ www.barnespos.com
                                             });
                                         });
     </script>
+<script type="text/javascript">
+$(document).ready(function(){	
+	$('#all').fadeIn(600);
+});
+</script>
+<div id="all" style="display:none">
+				
 <h3>Manage Categories</h3>
 <p>Organize your items into categories to make them easier to manage. </p><br/>
 
@@ -160,4 +167,6 @@ www.barnespos.com
     <br/>
     <!-- prints X of Y, where X is current page and Y is number of pages -->
     <?php echo $this->Paginator->counter(); ?>
+</div>
+
 </div>

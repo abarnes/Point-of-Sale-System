@@ -32,6 +32,14 @@ www.barnespos.com
                                             });
                                         });
     </script>
+    
+<script type="text/javascript">
+$(document).ready(function(){	
+	$('#all').fadeIn(600);
+});
+</script>
+<div id="all" style="display:none">
+				
 <h3>Manage Items</h3>
 <p>Manage your items, including their categories and modifiers. Click a column name to sort the table.</p><br/>
 
@@ -314,4 +322,6 @@ www.barnespos.com
     <br/>
     <!-- prints X of Y, where X is current page and Y is number of pages -->
     <?php echo $this->Paginator->counter(); ?>
+</div>
+
 </div>

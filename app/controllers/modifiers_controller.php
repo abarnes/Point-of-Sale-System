@@ -97,6 +97,8 @@ class ModifiersController extends AppController {
 	}
 	
 	function setup() {
+		$this->layout = 'noheader';
+		
 		$this->paginate = array('limit' => 18);
 			$modifiers = $this->paginate('Modifier');
 		

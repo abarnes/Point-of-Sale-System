@@ -58,6 +58,8 @@ class SettingsController extends AppController {
 	}
 	
 	function setup() {
+		$this->layout = 'noheader';
+		
 		$s = $this->Setting->find('first',array('order'=>'Setting.created ASC'));
 		$this->Setting->id = $s['Setting']['id'];
 		
@@ -66,7 +68,7 @@ class SettingsController extends AppController {
 		} else {
 			//save new settings
 			if ($this->Setting->save($this->data)) {
-				$this->Session->setFlash('Settings Saved');
+				//$this->Session->setFlash('Settings Saved');
 				$this->redirect(array('controller'=>'settings','action' => 'advanced_setup'));
 			} else {
 				$this->Session->setFlash('Error: Failed to Save Settings (settings,setup)');
@@ -76,6 +78,8 @@ class SettingsController extends AppController {
 	}
 	
 	function advanced_setup() {
+		$this->layout = 'noheader';
+		
 		$s = $this->Setting->find('first',array('order'=>'Setting.created ASC'));
 		$this->Setting->id = $s['Setting']['id'];
 		
@@ -84,7 +88,7 @@ class SettingsController extends AppController {
 		} else {
 			//save new settings
 			if ($this->Setting->save($this->data)) {
-				$this->Session->setFlash('Settings Saved');
+				//$this->Session->setFlash('Settings Saved');
 				$this->redirect(array('controller'=>'types','action' => 'setup'));
 			} else {
 				$this->Session->setFlash('Error: Failed to Save Settings (settings,advanced_setup)');

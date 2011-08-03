@@ -14,6 +14,13 @@ www.barnespos.com
 				    $('#dialog'+id).dialog('open');
 				}
 </script>
+<script type="text/javascript">
+$(document).ready(function(){	
+	$('#all').fadeIn(600);
+});
+</script>
+<div id="all" style="display:none">
+
 <h3>Manage Discounts</h3>
 
 <div class="link">
@@ -172,4 +179,6 @@ www.barnespos.com
     <br/>
     <!-- prints X of Y, where X is current page and Y is number of pages -->
     <?php echo $this->Paginator->counter(); ?>
+</div>
+
 </div>

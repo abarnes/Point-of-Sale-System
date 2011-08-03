@@ -32,6 +32,13 @@ www.barnespos.com
                                             });
                                         });
     </script>
+<script type="text/javascript">
+$(document).ready(function(){	
+	$('#all').fadeIn(600);
+});
+</script>
+<div id="all" style="display:none">
+				
 <h3>Manage Employees</h3>
 <p>Add employees to your system. "Admins" have full control over the system, while "users" can only manage tickets, as well as a few other non-administrative actions.</p><br/>
 
@@ -224,4 +231,6 @@ www.barnespos.com
     <br/>
     <!-- prints X of Y, where X is current page and Y is number of pages -->
     <?php echo $this->Paginator->counter(); ?>
+</div>
+
 </div>

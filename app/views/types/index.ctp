@@ -8,6 +8,13 @@ You may alter this code with the following limitations:
 Barnes POS Systems
 www.barnespos.com
 ------------------------------------------------------------------------------->
+<script type="text/javascript">
+$(document).ready(function(){	
+	$('#all').fadeIn(600);
+});
+</script>
+<div id="all" style="display:none">
+				
 <?php echo $this->Paginator->options(array('url' => $this->passedArgs)); ?>
 <script type="text/javascript">  
 				function opend(id) {
@@ -210,4 +217,6 @@ www.barnespos.com
     <br/>
     <!-- prints X of Y, where X is current page and Y is number of pages -->
     <?php echo $this->Paginator->counter(); ?>
+</div>
+
 </div>
