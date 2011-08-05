@@ -8,6 +8,13 @@ You may alter this code with the following limitations:
 Barnes POS Systems
 www.barnespos.com
 ------------------------------------------------------------------------------->
+<script type="text/javascript">
+$(document).ready(function(){	
+	$('#all').fadeIn(600);
+});
+</script>
+<div id="all" style="display:none">
+
 <?php if ($login=='0') { ?>
     <h3>Main Menu</h3>
     
@@ -66,4 +73,6 @@ www.barnespos.com
 						</form>	
 </div>
 <?php } ?>
+
+</div>
 				

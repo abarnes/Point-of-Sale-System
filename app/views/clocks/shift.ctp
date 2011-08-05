@@ -11,7 +11,7 @@ www.barnespos.com
 <h3>Shift Report<br/><?php echo $user['User']['full_name']; ?> - <?php echo date('n-j-Y'); ?></h3>
 
 <div class="link">
-<?php echo $html->link('<< Menu',array('controller'=>'pages','action'=>'menu')); ?>
+<?php echo $html->link('<< Menu',array('controller'=>'tickets','action'=>'menu')); ?>
 <br/><br/>
 </div>
 

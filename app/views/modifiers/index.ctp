@@ -54,9 +54,9 @@ $(document).ready(function(){
     
         <?php echo $form->create('Modifier', array('action' => 'add')); ?>
         <tr><td style="text-align:right;font-size:80%;">Name: </td><td><?php echo $form->input('name', array( 'label' => '')); ?></td></tr>
-        <tr><td style="text-align:right;font-size:80%;">Price: </td><td><?php echo $form->input('price', array( 'label' => '')); ?></td></tr>
+        <tr><td style="text-align:right;font-size:80%;">Price: $</td><td><?php echo $form->input('price', array( 'label' => '')); ?></td></tr>
         <tr><td style="text-align:right;font-size:80%;">Items: </td><td><?php echo $form->input('Item', array( 'label' => '')); ?>
-        <p>Hold the control key to select multiple items (command key on a Mac)</p>
+        <p style="font-size:80%;">Hold the control key to select multiple items (command key on a Mac)</p>
         </td></tr>
         <tr><td style="text-align:right;font-size:80%;">Description: </td><td><?php echo $form->input('description', array( 'label' => '')); ?></td></tr>
         <tr><td style="text-align:right;font-size:80%;">Enable: </td><td><?php echo $form->input('enable', array( 'label' => '','checked'=>true)); ?></td></tr>

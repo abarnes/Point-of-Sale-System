@@ -13,8 +13,7 @@ www.barnespos.com
 $(document).ready(function(){	
 	$('#all').fadeIn(900);
 });
-                                $(function(){				
-								
+                                $(function(){
                                 // Dialog			
 				$('#editform').dialog({
 					autoOpen: false,
@@ -38,7 +37,7 @@ $(document).ready(function(){
 </script>
 
 <div id="all" style="display:none;">
-				
+
 <div id="editform" title="Update Ticket Details">
 <?php echo $form->create('Ticket', array('action' => 'edit/'.$ticket['Ticket']['id'].'/'.$seats)); ?>
     <?php echo $form->input('Ticket.table', array( 'label' => 'Table: ','value'=>$ticket['Ticket']['table'])); ?>
@@ -50,7 +49,7 @@ $(document).ready(function(){
 <div style="width:25%;float:right;">
 <ul style="float:right;margin-top:5px;margin-bottom:8px;">
 				<li style="display:inline;margin:0px 6px;"><input style="width:135px;height:40px;font-size:1em;position:relative;bottom:0px;margin:0px;" type="button" class="submits" value="Edit Ticket Details" id="editform_link"/></li>
-				<li style="display:inline;margin:0px;"><a href="/tickets/view/<?php echo $id; ?>" onclick="return confirm('Are you sure you want to cancel editing this ticket?');"><input style="width:70px;height:40px;font-size:1em;position:relative;bottom:0px;margin:0px;" type="button" class="submits" value="Cancel"/></a></li>
+				<li style="display:inline;margin:0px;"><a href="/tickets/unlock_red/<?php echo $id; ?>/tickets,view,<?php echo $id; ?>" onclick="return confirm('Are you sure you want to cancel editing this ticket?');"><input style="width:70px;height:40px;font-size:1em;position:relative;bottom:0px;margin:0px;" type="button" class="submits" value="Cancel"/></a></li>
 </ul>
 </div>
 
@@ -88,7 +87,7 @@ $(document).ready(function(){
         $sn = $co+1;
         //echo 'Seat '.$sn; ?>
 	
-        <?php if ($ticket['Type']['use_seats']=='1') { ?>
+	<?php if ($ticket['Type']['use_seats']=='1') { ?>
 			<li><a href="#tabs-<?php echo $co; ?>">Seat <?php echo $sn; ?></a></li>
 	<?php } else { ?>
 			<li><a href="#tabs-<?php echo $co; ?>">Order</a></li>
@@ -121,7 +120,8 @@ $(document).ready(function(){
                     
                     <?php foreach($ct['Item'] as $i) { ?>
 			<?php if ($i['enable']=='1') { ?>
-                    
+						
+			
                         <?php
                         //see if item needs mods by default
                         if ($i['mods_on']==1) { ?>
@@ -182,8 +182,9 @@ $(document).ready(function(){
                                         <input onclick="modifd('<?php echo $sn; ?>','<?php echo $i['id']; ?>','<?php echo $m['id']; ?>','<?php echo $m['name']; ?>')" type="button" value="<?php echo $m['name']; ?>" style="width:100px;height:80px;margin-bottom:14px;font-size:.9em;" class="submits" id="<?php echo $m['id'].'m'.$sn.'k'.$i['id']; ?>">
 						<?php } ?>
                                     <?php } ?>
+				    <p>Text: <input type="text" id="<?php echo 'custom_m'.$sn.'k'.$i['id']; ?>" style="width:550px"></p><br/><hr/>
                                     <br/>
-                                    <input type="button" onclick="finishd('<?php echo $sn; ?>','<?php echo $i['name']; ?>','<?php echo $i['id']; ?>')" value="Finish">
+                                    <input type="button" class="submits" style="height:38px;" onclick="finishd('<?php echo $sn; ?>','<?php echo $i['name']; ?>','<?php echo $i['id']; ?>')" value="Finish">
                             </div>
     
 			<div id="dialogg-<?php echo $sn.'-'.$i['id']; ?>" title="Options">
@@ -197,9 +198,10 @@ $(document).ready(function(){
                                         <input onclick="modif_edit('<?php echo $sn; ?>','<?php echo $i['id']; ?>','<?php echo $m['id']; ?>','<?php echo $m['name']; ?>')" type="button" value="<?php echo $m['name']; ?>" style="width:100px;height:80px;margin-bottom:14px;font-size:.9em;" class="submits" id="<?php echo $m['id'].'mm'.$sn.'k'.$i['id']; ?>">
 						<?php } ?>
                                     <?php } ?>
+				    <p>Text: <input type="text" id="<?php echo 'custom_mm'.$sn.'k'.$i['id']; ?>" style="width:550px"></p><br/><hr/>
                                     <br/>
 				    <span style="display:none;" id="<?php echo $sn; ?>editsvf<?php echo $i['id']; ?>"></span>
-                                    <input type="button" onclick="finish_edit('<?php echo $sn; ?>','<?php echo $i['name']; ?>','<?php echo $i['id']; ?>')" value="Finish">
+                                    <input type="button" class="submits" style="height:38px;" onclick="finish_edit('<?php echo $sn; ?>','<?php echo $i['name']; ?>','<?php echo $i['id']; ?>')" value="Finish">
                             </div>
                                   
                         <?php } else { ?>
@@ -234,12 +236,13 @@ $(document).ready(function(){
                                         <input onclick="modif_edit('<?php echo $sn; ?>','<?php echo $i['id']; ?>','<?php echo $m['id']; ?>','<?php echo $m['name']; ?>')" type="button" value="<?php echo $m['name']; ?>" style="width:100px;height:80px;margin-bottom:14px;font-size:.9em;" class="submits" id="<?php echo $m['id'].'mm'.$sn.'k'.$i['id']; ?>">
 					<?php } ?>
                                     <?php } ?>
+				    <p>Text: <input type="text" id="<?php echo 'custom_mm'.$sn.'k'.$i['id']; ?>" style="width:550px"></p><br/><hr/>
                                     <br/>
 				    <span style="display:none;" id="<?php echo $sn; ?>editsvf<?php echo $i['id']; ?>"></span>
-                                    <input type="button" onclick="finish_edit('<?php echo $sn; ?>','<?php echo $i['name']; ?>','<?php echo $i['id']; ?>')" value="Finish">
+                                    <input type="button" class="submits" style="height:38px;" onclick="finish_edit('<?php echo $sn; ?>','<?php echo $i['name']; ?>','<?php echo $i['id']; ?>')" value="Finish">
                             </div>
                         <?php } ?>
-			
+			<!--end enabled check-->
 			<?php } ?>
                     <?php } ?>
                     
@@ -395,15 +398,20 @@ $c++;
                                                 var i=0;
                                                 for (i=0;i<=sixth;i++) {
                                                     var txt = third[i];
-						    $('#'+txt+'mm'+sn+'k'+id).removeClass('submits');
-						    $('#'+txt+'mm'+sn+'k'+id).addClass('submits2');
-                                                    //alert(txt);
+						    if (txt.charAt(0)=='|') {
+								document.getElementById("custom_mm"+sn+"k"+id).value = txt.replace('|','');				
+						    } else {
+								$('#'+txt+'mm'+sn+'k'+id).removeClass('submits');
+								$('#'+txt+'mm'+sn+'k'+id).addClass('submits2');
+						    }
                                                 }   
                                             } else {
-				                $('#'+second+'mm'+sn+'k'+id).removeClass('submits');
-				                $('#'+second+'mm'+sn+'k'+id).addClass('submits2');
-                                                //document.getElementById("edit"+second+"m"+sn+"k"+id).checked = true;
-                                                //document.getElementById("edit"+second+"m"+sn+"k"+id).value = '1';
+				                if (second.charAt(0)=='|') {
+								document.getElementById("custom_mm"+sn+"k"+id).value = second.replace('|','');				
+				                } else {
+								$('#'+second+'mm'+sn+'k'+id).removeClass('submits');
+								$('#'+second+'mm'+sn+'k'+id).addClass('submits2');
+				                }
                                             }
                                             $('#dialogg-'+sn+'-'+id).dialog('open');
                                         }
@@ -413,7 +421,7 @@ $c++;
 <script type='text/javascript'>
 function seat(sn,txt,id,mod) {
       var c = sn-1;
-      $('#sseat'+sn).append('<span id="'+sn+'k'+id+'-"><a href="#" onclick="clicked(\''+sn+'\',\''+id+'\',\''+mod+'\')">'+txt+'</a></span><a id="a'+sn+'k'+id+'-'+mod+'" onclick="remo(\''+sn+'\',\''+id+'('+mod+'),\',\''+sn+'k'+id+'-\')"><?php echo $html->image('close.png',array('alt'=>'Barnes POS System','style'=>'float:right;')); ?><br/></a><p style="font-size:70%" id="p'+sn+'k'+id+'-'+mod+'"></p><div style="height:6px;"></div>');
+      $('#sseat'+sn).append('<span id="'+sn+'k'+id+'-"><a href="#" onclick="clicked(\''+sn+'\',\''+id+'\',\''+mod+'\')">'+txt+'</a></span><a id="a'+sn+'k'+id+'-'+mod+'" onclick="remo(\''+sn+'\',\''+id+'('+mod+'),\',\''+sn+'k'+id+'-\')"><?php echo $html->image('close.png',array('alt'=>'Barnes POS System','style'=>'float:right;')); ?><br/></a><p style="font-size:70%" id="p'+sn+'k'+id+'-'+mod+'"></p><div style="height:6px;" id="d'+sn+'k'+id+'-"></div>');
       document.getElementById("Seat"+c+"Items").value += id+'('+mod+'),';
 }
 
@@ -438,11 +446,14 @@ function remo(sn,txt,t) {
 			if (r2 != null) {
 						d.removeChild(r2);
 			}
+			var r4 = document.getElementById('d'+t);
+			if (r4 != null) {
+						d.removeChild(r4);
+			}
 }
 </script>
 
-<script type="text/javascript">
-												
+<script type="text/javascript">										
     function modifd(sn,id,mod,name) {
 	//var fi = document.getElementById(mod+'m'+sn+'k'+id);
 	if ($('#'+mod+'m'+sn+'k'+id).hasClass('submits')==true) {
@@ -461,8 +472,13 @@ function remo(sn,txt,t) {
     function finishd(sn,txt,id) {
         var t = this["t"+sn+"k"+id];
         var tx = this["tx"+sn+"k"+id];
+	var fi = document.getElementById("custom_m"+sn+"k"+id).value;
+	if (fi!='') {
+		t+='|'+fi+':';
+		tx+=fi+' ';
+	}
         var c = sn-1;
-	$('#sseat'+sn).append('<span id="'+sn+'k'+id+'-'+t+'"><a href="#" onclick="clicked(\''+sn+'\',\''+id+'\',\''+t+'\')">'+txt+'</a><a id="a'+sn+'k'+id+'-'+t+'" href="#" onclick="remo(\''+sn+'\',\''+id+'('+t+'),\',\''+sn+'k'+id+'-'+t+'\')"><?php echo $html->image('close.png',array('alt'=>'Barnes POS System','style'=>'float:right;')); ?></a></span><p style="font-size:70%" id="p'+sn+'k'+id+'-'+t+'">'+tx+'</p><div style="height:5px;"></div>');
+	$('#sseat'+sn).append('<span id="'+sn+'k'+id+'-'+t+'"><a href="#" onclick="clicked(\''+sn+'\',\''+id+'\',\''+t+'\')">'+txt+'</a><a id="a'+sn+'k'+id+'-'+t+'" href="#" onclick="remo(\''+sn+'\',\''+id+'('+t+'),\',\''+sn+'k'+id+'-'+t+'\')"><?php echo $html->image('close.png',array('alt'=>'Barnes POS System','style'=>'float:right;')); ?></a></span><p style="font-size:70%" id="p'+sn+'k'+id+'-'+t+'">'+tx+'</p><div style="height:5px;" id="d'+sn+'k'+id+'-'+t+'"></div>');
 	
         document.getElementById("Seat"+c+"Items").value += id+'('+t+'),';
         
@@ -485,6 +501,7 @@ function remo(sn,txt,t) {
 	    document.getElementById(sn+"editsvf"+id).innerHTML+=mod+':';
 	    //document.getElementById(sn+"edits"+id).innerHTML += '<a href="#" onclick="modifd(\''+sn+'\',\''+id+'\',\''+mod+'\',\''+name+'\',\'1\')">'+name+'</a>';
 	} else {
+	    //alert('remove');
             this["tt"+sn+"k"+id] = this["tt"+sn+"k"+id].replace(mod+':','');
 	    this["txx"+sn+"k"+id] = this["txx"+sn+"k"+id].replace(name+' ','');
 	    
@@ -503,11 +520,10 @@ function remo(sn,txt,t) {
 	    var nt = nw.replace('<a href="#" onclick="modifd(\''+sn+'\',\''+id+'\',\''+mod+'\',\''+name+'\',\'1\')">'+name+'</a>','');
 	    document.getElementById(sn+"edits"+id).innerHTML = nt;  */
 	}
-	//alert(document.getElementById(sn+"edits"+id).innerHTML);
     }
                                     
     function finish_edit(sn,txt,id) {
-        var c = sn-1;				    
+        var c = sn-1;
 						
 	var old = document.getElementById("Seat"+c+"Items").value;
 	var newtext = old.replace(id+'('+window.newt+'),','');
@@ -515,6 +531,30 @@ function remo(sn,txt,t) {
 	
         gt = document.getElementById(sn+"edits"+id).innerHTML;
 	gtvf = document.getElementById(sn+"editsvf"+id).innerHTML;
+	
+	if (gtvf.indexOf('|')!=-1 && gtvf.indexOf(':')!=-1) {
+                                var third = gtvf.split(":");
+                                var fourth = third.length;
+                                var sixth = fourth-2;
+                                var i=0;
+                                for (i=0;i<=sixth;i++) {
+				        var ff = third[i];
+					if (third[i]!='') {
+				             if (ff.indexOf('|')=='0') {
+				                  third.splice(i,1);
+						  var ne = ff.slice('1',ff.length);
+						  gt = gt.replace(ne+' ',"");
+				             }
+					}
+				}
+				gtvf = third.join(':');
+	}
+	
+	var fi = document.getElementById("custom_mm"+sn+"k"+id).value;
+	if (fi!='') {
+		gtvf+='|'+fi+':';
+		gt+=fi+' ';
+	}
         
         //change seats view
 			var d = document.getElementById('sseat'+sn);
@@ -528,8 +568,12 @@ function remo(sn,txt,t) {
 			if (r2 != null) {
 						d.removeChild(r2);
 			}
+			var r4 = document.getElementById('d'+sn+'k'+id+'-'+window.newt);
+			if (r4 != null) {
+						d.removeChild(r4);
+			}
         
-	$('#sseat'+sn).append('<span id="'+sn+'k'+id+'-'+gtvf+'"><a href="#" onclick="clicked(\''+sn+'\',\''+id+'\',\''+gtvf+'\')">'+txt+'</a><a id="a'+sn+'k'+id+'-'+gtvf+'" href="#" onclick="remo(\''+sn+'\',\''+id+'('+gtvf+'),\',\''+sn+'k'+id+'-'+gtvf+'\')"><?php echo $html->image('close.png',array('alt'=>'Barnes POS System','style'=>'float:right;')); ?></a></span><p style="font-size:70%" id="p'+sn+'k'+id+'-'+gtvf+'">'+gt+'</p><div style="height:5px;"></div>');
+	$('#sseat'+sn).append('<span id="'+sn+'k'+id+'-'+gtvf+'"><a href="#" onclick="clicked(\''+sn+'\',\''+id+'\',\''+gtvf+'\')">'+txt+'</a><a id="a'+sn+'k'+id+'-'+gtvf+'" href="#" onclick="remo(\''+sn+'\',\''+id+'('+gtvf+'),\',\''+sn+'k'+id+'-'+gtvf+'\')"><?php echo $html->image('close.png',array('alt'=>'Barnes POS System','style'=>'float:right;')); ?></a></span><p style="font-size:70%" id="p'+sn+'k'+id+'-'+gtvf+'">'+gt+'</p><div style="height:5px;" id="d'+sn+'k'+id+'-'+gtvf+'"></div>');
         document.getElementById("Seat"+c+"Items").value += id+'('+gtvf+'),';
 
         this["tt"+sn+"k"+id]='';

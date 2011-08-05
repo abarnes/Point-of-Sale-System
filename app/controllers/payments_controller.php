@@ -204,12 +204,14 @@ class PaymentsController extends AppController {
 						$test = array();
 						$modextras = 0;
 						foreach ($newm as $nm) {
-							if ($nm!='') {
+							if ($nm!='' && substr($nm,0,1)!='|') {
 								$test[] = $mods[$nm];
 								//die(print_r($mprice[$nm]));
 								if ($mprice[$nm]!=0.00) {
 									$modextras += $mprice[$nm];
 								}
+							} elseif (substr($nm,0,1)=='|') {
+								$test[] = substr($nm,1);
 							}
 						}
 						//check for discounts
@@ -390,7 +392,8 @@ class PaymentsController extends AppController {
 	function _gimme($id) {
 		//generate signature-----------------------------------------------------------------------------------
 		$settings = $this->Setting->find('first',array('order'=>'Setting.created ASC'));
-		$loc = $settings['Setting']['locationid'];
+		//$loc = $settings['Setting']['locationid'];
+		$loc = '2';
 		
 		//pull ticket data
 		$this->Ticket->recursive = 2;
@@ -400,9 +403,9 @@ class PaymentsController extends AppController {
 		}
 		
 		$signature = null;
-		$toSign = "http://www.gimmetag.com/pos/api/location/".$loc."/receiptjson?sequence=2200012&signature=";
+		$toSign = "http://173.246.103.0:9000/pos/api/location/".$loc."/receiptjson?sequence=2200012&signature=";
 		// Read the private key from the file.
-		$fp = fopen("/Users/Schwamm/Sites/barnespossystem/app/webroot/files/key.pem", "r");
+		$fp = fopen("/Users/austin 1/Sites/barnespossystem/app/webroot/files/key.pem", "r");
 		$priv_key = fread($fp, 8192);
 		fclose($fp);
 		$pkeyid = openssl_get_privatekey($priv_key);
@@ -416,6 +419,7 @@ class PaymentsController extends AppController {
 		//$toSign .= "/" . $hex;
 		$toSign .= $hex;
 		//return $toSign;
+		//die(print($toSign));
 	
 		//json encoded receipt details ----------------------------------------------------------------------------	
 		$item = $this->Item->find('list',array('fields'=>array('Item.short_name')));
@@ -441,20 +445,17 @@ class PaymentsController extends AppController {
 				//find item
 				$first = strpos($n,'(');
 				$th = substr($n,0,$first);
-				$its[] = $th;
+				if ($th!='' && $th!='0') {
+					$its[] = intval($th);
+				}
 			}
 		}
 		
 		$its2 = array_unique($its);
 		foreach ($its2 as $i) {
 			$name = $item[$i];
-			$quantity = array_count_values($its);
-			$quantity = 0;
-			foreach ($its as $m) {
-				if ($m == $i) {
-					$quantity++;
-				}
-			}
+			$q = array_count_values($its);
+			$quantity = $q[$i];
 			
 			//check for discounts
 			$price = 100000000;
@@ -479,17 +480,20 @@ class PaymentsController extends AppController {
 			$data['order']['items'][] = array('item'=>$name,'quantity'=>$quantity,'price'=>$price);
 		}
 		$json = json_encode($data);
+		$data = array('rcpt'=>$json);
+		die(print($toSign));
 		
 		$ch = curl_init();
 		curl_setopt($ch, CURLOPT_HTTPHEADER, array('Content-Type: application/json'));
 		curl_setopt($ch, CURLOPT_URL, $toSign);
 		curl_setopt($ch, CURLOPT_FOLLOWLOCATION, TRUE);
-		curl_setopt($ch, CURLOPT_POSTFIELDS, $json);
-		curl_setopt($ch, CURLOPT_POST, 1);
+		curl_setopt($ch,CURLOPT_POST,1);
+		curl_setopt($ch, CURLOPT_POSTFIELDS, $data);
 		curl_setopt ($ch, CURLOPT_RETURNTRANSFER, true);
 		$result = curl_exec ($ch);
 		$code = curl_getinfo($ch, CURLINFO_HTTP_CODE);
 		curl_close($ch);
+		die(print($result));
 		
 		if ($code>=400) {
 			if ($code==403) {
@@ -498,7 +502,6 @@ class PaymentsController extends AppController {
 				return 'c'.$code;
 			}
 		}
-		print_r($httpCode);
 		
 		//return $httpCode;
 	}

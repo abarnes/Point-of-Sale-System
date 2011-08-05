@@ -35,17 +35,7 @@ www.barnespos.com
     <?php echo $form->input('notes', array( 'label' => 'Notes')); ?>
     <?php echo $form->input('enable', array( 'label' => 'Allow Clock-In')); ?>
     <?php echo $form->input('id', array( 'type'=>'hidden')); ?>
-    <!--------submit form----->
-    <script type="text/javascript">
-    function submitform() {
-      document.getElementById('UserEdit<?php echo '/'.$id.'/'.$ac; ?>Form').submit();
-    }
-    </script>
-    <br/>
-    <a style="vertical-align:bottom;margin-left:0px;margin-right:20px;" href="#" onclick="submitform()"><input style="width:100%;margin-right:0px;height:44px;" type="button" class="submits" value="Submit"></a>
-    <br/><br/>
-    
-    <?php //echo $form->end('Update User'); ?>
+    <?php echo $form->end('Update User'); ?>
     </div>
     
     <div style="width:40%;float:right;">

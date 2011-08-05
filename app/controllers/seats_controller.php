@@ -63,11 +63,11 @@ class SeatsController extends AppController {
 						$newm = explode(':',$m);
 						$modextras = 0;
 						foreach ($newm as $nm) {
-							if ($nm!='') {
+							if ($nm!='' && substr($nm,0,1)!='|') {
 								if ($mprice[$nm]!=0.00) {
 									$modextras += $mprice[$nm];
 								}
-							}
+							} 
 						}
 						
 						//check for discounts
@@ -169,7 +169,7 @@ class SeatsController extends AppController {
 						$newm = explode(':',$m);
 						$modextras = 0;
 						foreach ($newm as $nm) {
-							if ($nm!='') {
+							if ($nm!='' && substr($nm,0,1)!='|') {
 								if ($mprice[$nm]!=0.00) {
 									$modextras += $mprice[$nm];
 								}
@@ -282,13 +282,15 @@ class SeatsController extends AppController {
 						$test = array();
 						$modextras = 0;
 						foreach ($newm as $nm) {
-							if ($nm!='') {
-								$test[] = $mods[$nm];
-								//die(print_r($mprice[$nm]));
-								if ($mprice[$nm]!=0.00) {
-									$modextras += $mprice[$nm];
-								}
-							}
+							if ($nm!='' && substr($nm,0,1)!='|') {
+                                                            $test[] = $mods[$nm];
+                                                            //die(print_r($mprice[$nm]));
+                                                            if ($mprice[$nm]!=0.00) {
+                                                                $modextras += $mprice[$nm];
+                                                            }
+                                                        } elseif (substr($nm,0,1)=='|') {
+                                                            $test[] = substr($nm,1);
+                                                        }
 						}
 						//check for discounts
 						$p = 0;
@@ -409,14 +411,20 @@ class SeatsController extends AppController {
 									$string = $string."      ";
 									$co = 1;
 									foreach ($newm as $nm) {
-										if ($nm!='') {
+										if ($nm!='' && subst($nm,0,1)!='|') {
 											//$sn = $co+1;
 											if ($co%3==0) {
 												$string = $string."\n      ";
 											}
 											$string=$string.$mods[$nm].", ";
 											$co++;
-										}
+										} elseif (subst($nm,0,1)=='|') {
+                                                                                    if ($co%3==0) {
+											$string = $string."\n      ";
+										    }
+										    $string=$string.substr($nm,1).", ";
+										    $co++;
+                                                                                }
 									}
 									$string = rtrim($string,', ');
 									$string = $string."\n";
@@ -451,14 +459,20 @@ class SeatsController extends AppController {
 									$string = $string."      ";
 									$co = 1;
 									foreach ($newm as $nm) {
-										if ($nm!='') {
+										if ($nm!='' && subst($nm,0,1)!='|') {
 											//$sn = $co+1;
 											if ($co%3==0) {
 												$string = $string."\n      ";
 											}
 											$string=$string.$mods[$nm].", ";
 											$co++;
-										}
+										} elseif (subst($nm,0,1)=='|') {
+                                                                                    if ($co%3==0) {
+											$string = $string."\n      ";
+										    }
+										    $string=$string.substr($nm,1).", ";
+										    $co++;
+                                                                                }
 									}
 									$string = rtrim($string,', ');
 									$string = $string."\n";
@@ -553,14 +567,20 @@ class SeatsController extends AppController {
 								$string = $string."      ";
 								$co = 1;
 								foreach ($newm as $nm) {
-									if ($nm!='') {
-										//$sn = $co+1;
-										if ($co%3==0) {
+										if ($nm!='' && subst($nm,0,1)!='|') {
+											//$sn = $co+1;
+											if ($co%3==0) {
+												$string = $string."\n      ";
+											}
+											$string=$string.$mods[$nm].", ";
+											$co++;
+										} elseif (subst($nm,0,1)=='|') {
+                                                                                    if ($co%3==0) {
 											$string = $string."\n      ";
-										}
-										$string=$string.$mods[$nm].", ";
-										$co++;
-									}
+										    }
+										    $string=$string.substr($nm,1).", ";
+										    $co++;
+                                                                                }
 								}
 								$string = rtrim($string,', ');
 								$string = $string."\n";
@@ -595,14 +615,20 @@ class SeatsController extends AppController {
 								$string = $string."      ";
 								$co = 1;
 								foreach ($newm as $nm) {
-									if ($nm!='') {
-										//$sn = $co+1;
-										if ($co%3==0) {
+										if ($nm!='' && subst($nm,0,1)!='|') {
+											//$sn = $co+1;
+											if ($co%3==0) {
+												$string = $string."\n      ";
+											}
+											$string=$string.$mods[$nm].", ";
+											$co++;
+										} elseif (subst($nm,0,1)=='|') {
+                                                                                    if ($co%3==0) {
 											$string = $string."\n      ";
-										}
-										$string=$string.$mods[$nm].", ";
-										$co++;
-									}
+										    }
+										    $string=$string.substr($nm,1).", ";
+										    $co++;
+                                                                                }
 								}
 								$string = rtrim($string,', ');
 								$string = $string."\n";

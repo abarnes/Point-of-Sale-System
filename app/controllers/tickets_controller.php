@@ -332,14 +332,16 @@ class TicketsController extends AppController {
 					$test = array();
 					$modextras = 0;
 					foreach ($newm as $nm) {
-						if ($nm!='') {
-							$test[] = $mods[$nm];
-							//die(print_r($mprice[$nm]));
-							if ($mprice[$nm]!=0.00) {
-								$modextras += $mprice[$nm];
-							}
-						}
-					}
+						if ($nm!='' && substr($nm,0,1)!='|') {
+						    $test[] = $mods[$nm];
+						    //die(print_r($mprice[$nm]));
+						    if ($mprice[$nm]!=0.00) {
+							$modextras += $mprice[$nm];
+						    }
+						} elseif (substr($nm,0,1)=='|') {
+                                                    $test[] = substr($nm,1);
+                                                }
+ 					}
 					//check for discounts
 						$p = 0;
 						if (in_array($th,$dis_id)) {
@@ -1085,7 +1087,7 @@ class TicketsController extends AppController {
             $this->Ticket->saveField('lock','0');
             
             if ($url!=null) {
-                $this->redirect($url);
+                $this->redirect('/'.str_replace(',','/',$url));
             } else {
                 exit();
             }
