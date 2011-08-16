@@ -92,6 +92,8 @@ class TypesController extends AppController {
 	}
 	
 	function setup() {
+		$this->layout = 'noheader';
+		
 		$this->paginate = array('limit' => 18);
 			$types = $this->paginate('Type');
 			/*if (count($types)==0){

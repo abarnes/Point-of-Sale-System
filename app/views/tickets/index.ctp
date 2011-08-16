@@ -21,7 +21,11 @@ function voi(url){
 function uvoi(url){
     if(confirm('Are you sure you want to revert this ticket\'s status to submitted?')) location.href = url;
 }
+$(document).ready(function(){	
+	$('#all').fadeIn(400);
+});
 </script>
+<div id="all" style="display:none;">
 
 <?php echo $this->Paginator->options(array('url' => $this->passedArgs)); ?>
 <h3>Tickets</h3>
@@ -117,7 +121,7 @@ function uvoi(url){
 		    //echo $html->link('Split',array('action'=>'split/'.$u['Ticket']['id']));
 		}
 		//echo $html->link('Pay',array('controller'=>'payments','action'=>'pay/'.$u['Ticket']['id']));
-		echo '<input style="width:70px;height:28px;font-size:1em;margin:0px 4px 0px 0px;" type="button" class="submits" value="Edit" onclick="parent.location=\'/tickets/edit/'.$u['Ticket']['id'].'\'">';
+		echo '<input style="width:70px;height:28px;font-size:1em;margin:0px 4px 0px 0px;" type="button" class="submits" value="Edit" onclick="parent.location=\'/seats/edit/'.$u['Ticket']['id'].'\'">';
 		//echo $html->link('Edit',array('controller'=>'seats','action'=>'edit/'.$u['Ticket']['id'])); 
 	    }
 	    echo '<input style="width:70px;height:28px;font-size:1em;margin:0px 4px 0px 0px;" type="button" class="submits" value="Status" onclick="opend('.$u['Ticket']['id'].')">';
@@ -189,4 +193,6 @@ function uvoi(url){
     <br/>
     <!-- prints X of Y, where X is current page and Y is number of pages -->
     <?php echo $this->Paginator->counter(); ?>
+</div>
+<!--end all div-->
 </div>

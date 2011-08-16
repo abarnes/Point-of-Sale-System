@@ -8,6 +8,13 @@ You may alter this code with the following limitations:
 Barnes POS Systems
 www.barnespos.com
 ------------------------------------------------------------------------------->
+<script type="text/javascript">
+$(document).ready(function(){	
+	$('#all').fadeIn(600);
+});
+</script>
+<div id="all" style="display:none">
+
 <br/>
 <?php echo $this->Paginator->options(array('url' => $this->passedArgs)); ?>
 <h3>Setup Utility -- Create Order Types</h3>
@@ -215,3 +222,5 @@ www.barnespos.com
         <br/>
         <a style="float:left;vertical-align:bottom;margin-left:10px;" href="/settings/advanced_setup"><input type="button" class="submits" value="Previous"></a>
         <a style="float:right;vertical-align:bottom;margin-right:10px;" href="/categories/setup"><input type="button" class="submits" value="Next"></a>
+	
+</div>

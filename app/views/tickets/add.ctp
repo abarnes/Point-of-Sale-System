@@ -19,6 +19,13 @@ function clr(type){
 }
 </script>
 
+<script type="text/javascript">
+$(document).ready(function(){	
+	$('#all').fadeIn(600);
+});
+</script>
+<div id="all" style="display:none">
+
 <h3>Place Order</h3>
 
 <?php if (!isset($step)) { ?>
@@ -37,7 +44,7 @@ function clr(type){
     <div class="label">
     <?php echo $form->create('Ticket', array('action' => 'add/2/'.$type)); ?>
     <?php echo $form->input('Ticket.type_id', array( 'label' => 'Order Type','type'=>'hidden','value'=>$type)); ?>
-    <?php echo $form->input('Ticket.table', array( 'label' => 'Table','value'=>$tab)); ?>
+    <?php echo $form->input('Ticket.table', array( 'label' => 'Table','value'=>$tab,'autofocus'=>'autofocus')); ?>
     <?php echo $form->input('Ticket.cont', array( 'type'=>'hidden','value'=>$value)); ?>
     <?php echo $form->end('Submit'); ?>
     </div>
@@ -72,7 +79,7 @@ function clr(type){
     <div class="label">
     <?php echo $form->create('Ticket', array('action' => 'add/3/'.$type.'/'.$table)); ?>
     <?php echo $form->input('Ticket.type_id', array( 'label' => 'Order Type','type'=>'hidden','value'=>$type)); ?>
-    <?php echo $form->input('Ticket.seats', array( 'label' => 'Number of Seats','maxlength'=>'2')); ?>
+    <?php echo $form->input('Ticket.seats', array( 'label' => 'Number of Seats','maxlength'=>'2','autofocus'=>'autofocus')); ?>
     <?php echo $form->end('Submit'); ?>
     </div>
     
@@ -102,4 +109,4 @@ function clr(type){
 </div>    
 <?php } ?>
 
-    
+</div>    

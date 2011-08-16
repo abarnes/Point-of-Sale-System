@@ -93,6 +93,8 @@ class CategoriesController extends AppController {
 	}
 	
 	function setup() {
+		$this->layout = 'noheader';
+		
 		$this->paginate = array('limit' => 18);
 		$cats = $this->paginate('Category');
 			/*if (count($types)==0){

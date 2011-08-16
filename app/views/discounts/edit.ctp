@@ -12,11 +12,11 @@ www.barnespos.com
 <div class="link">
 <a href="/discounts"><< Back to Discounts</a>
 <br/><br/>
-<p>Select Days for which the discount is valid, and the start and end times on those days.  For different times on different days, create multple discounts with separate rules.</p>
-<br/>
 </div>
 
-<div class="label" style="width:60%;">
+<div style="width:60%;float:left;">
+
+<div class="label">
     <?php echo $form->create('Discount', array('action' => 'edit/'.$did)); ?>
     
     <?php echo $form->input('monday', array( 'label' => 'Monday')); ?>
@@ -33,5 +33,19 @@ www.barnespos.com
     <?php echo $form->input('enable', array( 'label' => 'Enabled')); ?>
     
     <?php echo $form->end('Update Discount'); ?>
+    <br/>
+</div>
+
+</div>
+
+<div style="40%;float:right;">
+    <h4>Days & Times</h4>
+    <p>Select Days for which the discount is valid, and the start and end times on those days.  For different times on different days, create multple discounts with separate rules.</p>
+    <br/><br/>
+    <h4>Price</h4>
+    <p>No dollar sign ($) on price.</p>
+    <br/><br/>
+    <h4>Enabled</h4>
+    <p>Unchecking this box will not permanently remove this discount, but will make it inactive until changed.</p>
     <br/>
 </div>

@@ -28,6 +28,13 @@ www.barnespos.com
                                         });
 </script>
 
+<script type="text/javascript">
+$(document).ready(function(){	
+	$('#all').fadeIn(600);
+});
+</script>
+<div id="all" style="display:none">
+
 <?php echo $this->Paginator->options(array('url' => $this->passedArgs)); ?>
 <h3>Records</h3>
 
@@ -126,4 +133,6 @@ www.barnespos.com
     <br/>
     <!-- prints X of Y, where X is current page and Y is number of pages -->
     <?php echo $this->Paginator->counter(); ?>
+</div>
+
 </div>

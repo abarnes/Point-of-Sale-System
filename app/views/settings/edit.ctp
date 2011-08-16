@@ -8,6 +8,13 @@ You may alter this code with the following limitations:
 Barnes POS Systems
 www.barnespos.com
 ------------------------------------------------------------------------------->
+<script type="text/javascript">
+$(document).ready(function(){	
+	$('#all').fadeIn(600);
+});
+</script>
+<div id="all" style="display:none">
+
 <br/>
 <h3>General Settings</h3>
 
@@ -86,3 +93,5 @@ www.barnespos.com
 				</p>
 				</div>
 	</div>
+	
+</div>

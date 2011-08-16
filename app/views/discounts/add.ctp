@@ -12,26 +12,40 @@ www.barnespos.com
 <div class="link">
 <a href="/items"><< Back to Items</a>
 <br/><br/>
-<p>Select Days for which the discount is valid, and the start and end times on those days.  For different times on different days, create multple discounts with separate rules.</p>
-<br/>
 </div>
 
-<div class="label" style="width:60%;">
-    <?php echo $form->create('Discount', array('action' => 'add/'.$item['Item']['id'])); ?>
-    
-    <?php echo $form->input('monday', array( 'label' => 'Monday')); ?>
-    <?php echo $form->input('tuesday', array( 'label' => 'Tuesday')); ?>
-    <?php echo $form->input('wednesday', array( 'label' => 'Wednesday')); ?>
-    <?php echo $form->input('thursday', array( 'label' => 'Thursday')); ?>
-    <?php echo $form->input('friday', array( 'label' => 'Friday')); ?>
-    <?php echo $form->input('saturday', array( 'label' => 'Saturday')); ?>
-    <?php echo $form->input('sunday', array( 'label' => 'Sunday')); ?>
-    
-    <?php echo $form->input('start_time', array( 'label' => 'Start Time','selected' => array('hour' => '12', 'min' => '00', 'meridian' => 'am'))); ?>
-    <?php echo $form->input('end_time', array( 'label' => 'End Time', 'selected' => array('hour' => '11', 'min' => '59', 'meridian' => 'pm'))); ?>
-    <?php echo $form->input('price', array( 'label' => 'New Price: ')); ?>
-    <?php echo $form->input('enable', array( 'label' => 'Enabled','checked'=>true)); ?>
-    
-    <?php echo $form->end('Add Discount'); ?>
+<div style="width:60%;float:left;">
+
+    <div class="label">
+	<?php echo $form->create('Discount', array('action' => 'add/'.$item['Item']['id'])); ?>
+	
+	<?php echo $form->input('monday', array( 'label' => 'Monday')); ?>
+	<?php echo $form->input('tuesday', array( 'label' => 'Tuesday')); ?>
+	<?php echo $form->input('wednesday', array( 'label' => 'Wednesday')); ?>
+	<?php echo $form->input('thursday', array( 'label' => 'Thursday')); ?>
+	<?php echo $form->input('friday', array( 'label' => 'Friday')); ?>
+	<?php echo $form->input('saturday', array( 'label' => 'Saturday')); ?>
+	<?php echo $form->input('sunday', array( 'label' => 'Sunday')); ?>
+	
+	<?php echo $form->input('start_time', array( 'label' => 'Start Time','selected' => array('hour' => '12', 'min' => '00', 'meridian' => 'am'))); ?>
+	<?php echo $form->input('end_time', array( 'label' => 'End Time', 'selected' => array('hour' => '11', 'min' => '59', 'meridian' => 'pm'))); ?>
+	<?php echo $form->input('price', array( 'label' => 'New Price: ')); ?>
+	<?php echo $form->input('enable', array( 'label' => 'Enabled','checked'=>true)); ?>
+	
+	<?php echo $form->end('Add Discount'); ?>
+	<br/>
+    </div>
+
+</div>
+
+<div style="width:40%;float:right;">
+    <h4>Days & Times</h4>
+    <p>Select Days for which the discount is valid, and the start and end times on those days.  For different times on different days, create multple discounts with separate rules.</p>
+    <br/><br/>
+    <h4>Price</h4>
+    <p>No dollar sign ($) on price.</p>
+    <br/><br/>
+    <h4>Enabled</h4>
+    <p>Unchecking this box will not permanently remove this discount, but will make it inactive until changed.</p>
     <br/>
 </div>

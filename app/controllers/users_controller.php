@@ -191,9 +191,9 @@ class UsersController extends AppController {
 	function passwordchange($id = null) {
 		$this->User->id = $id;
 		$userinfo = $this->Auth->User();
+		$this->set('user',$this->User->findById($id));
 		if ($id == $userinfo['User']['id'] || $userinfo['User']['level']=='1') {
 			if (empty($this->data)) {
-				$this->set('user',$this->User->findById($id));
 				$this->data = $this->User->read();
 			} else {
 				$p2 = $this->data['User']['password2'];
@@ -244,6 +244,8 @@ class UsersController extends AppController {
 	}
 	
 	function setup() {
+		$this->layout = 'noheader';
+		
 		$this->paginate = array('limit' => 18);
 		$users = $this->paginate('User');
 		//render table or first admin form

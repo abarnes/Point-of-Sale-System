@@ -388,7 +388,7 @@ function remo(num,str) {
 				}
 				</script>
 			<br/>
-			<a style="vertical-align:bottom;margin-left:0px;" href="#" onclick="submitfr()"><input style="width:650px;" type="button" class="submits" value="Submit"></a>
+			<a style="vertical-align:bottom;margin-left:0px;" href="#" onclick="submitfr()"><input style="width:650px;height:44px;" type="button" class="submits" value="Submit"></a>
 	</div>
 </td><td style="background-color:transparent;border-color:transparent;">
 <!--</div>-->

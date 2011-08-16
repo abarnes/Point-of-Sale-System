@@ -61,8 +61,8 @@ body {
 }
 
 #jqt.supports3d {
-    -webkit-perspective: 800;
-    -webkit-transform-style: preserve-3d;
+    /*-webkit-perspective: 800;
+    -webkit-transform-style: preserve-3d;*/
 }
 
 #jqt.supports3d > * {

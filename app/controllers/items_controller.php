@@ -99,6 +99,8 @@ class ItemsController extends AppController {
 	}
 	
 	function setup() {
+		$this->layout = 'noheader';
+		
 		$this->paginate = array('limit' => 18);
 		$items = $this->paginate('Item');
 		

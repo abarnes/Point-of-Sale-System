@@ -21,7 +21,7 @@ www.barnespos.com
 		<meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1" />
 		<title>Barnes POS System</title>
 		
-		<?php echo $html->css('cake.generic'); ?>
+		<?php echo $html->css('cakeorig'); ?>
 		<?php echo $html->css('customstyle'); ?>
 		<?php echo $html->css('smoothness/jquery-ui-1.8.9.custom'); ?>
 		<?php //echo $html->script('jquery-core'); ?>

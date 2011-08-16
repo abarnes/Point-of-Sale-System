@@ -9,6 +9,13 @@ Barnes POS Systems
 www.barnespos.com
 ------------------------------------------------------------------------------->
 <?php echo $this->Paginator->options(array('url' => $this->passedArgs)); ?>
+<script type="text/javascript">
+$(document).ready(function(){	
+	$('#all').fadeIn(600);
+});
+</script>
+<div id="all" style="display:none">
+
 <br/>
 <?php if ($check==true) { ?>
     <!--Create first item--------------------------------->
@@ -351,4 +358,6 @@ www.barnespos.com
         <br/>
         <a style="float:left;vertical-align:bottom;margin-left:10px;" href="/categories/setup"><input type="button" class="submits" value="Previous"></a>
         <a style="float:right;vertical-align:bottom;margin-right:10px;" href="/modifiers/setup"><input type="button" class="submits" value="Next"></a>
+	<br/><br/><br/>
+</div>
 

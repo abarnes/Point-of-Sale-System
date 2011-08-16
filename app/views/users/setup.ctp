@@ -31,6 +31,13 @@ www.barnespos.com
                                             });
                                         });
     </script>
+    
+<script type="text/javascript">
+$(document).ready(function(){	
+	$('#all').fadeIn(600);
+});
+</script>
+<div id="all" style="display:none">
 
 <?php echo $this->Paginator->options(array('url' => $this->passedArgs)); ?>
 <br/>
@@ -215,6 +222,7 @@ www.barnespos.com
         <br/>
         <a style="float:left;vertical-align:bottom;margin-left:10px;" href="/pages/setup"><input type="button" class="submits" value="Previous"></a>
         <a style="float:right;vertical-align:bottom;margin-right:10px;" href="/settings/setup"><input type="button" class="submits" value="Next"></a>
+	<br/><br/><br/>
 <?php } ?>
 
  <div id="add" title="Add User">
@@ -239,3 +247,4 @@ www.barnespos.com
         </td></tr></table>
     </div>
 
+</div>

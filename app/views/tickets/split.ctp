@@ -102,10 +102,18 @@ www.barnespos.com
             $('#TicketTicket'+id).remove();
         }
 	</script>
+	
+	<script type="text/javascript">
+	function bac() {
+		$.get('/tickets/unlock_red/<?php echo $ticket['Ticket']['id']; ?>');
+		parent.history.back();
+	}
+	</script>
 
 <div id="droparea">
 	<h5>Drag the seat boxes into the ticket boxes to split the ticket into new tickets.  Click "Add Ticket" to create additional new tickets.</h5>
-	<input style="width:90px;height:28px;font-size:1em;margin:10px 4px 10px 0px;" type="button" class="submits" value="Back" onclick="parent.history.back();">
+	<input style="width:90px;height:28px;font-size:1em;margin:10px 4px 10px 0px;" type="button" class="submits" value="Back" onclick="bac()">
+
 	<hr style="width:100%;"/>
 	
         <div style="width:100%;min-height:140px;">
@@ -172,11 +180,18 @@ www.barnespos.com
         </div>
 </div>
 
+<!--------submit form----->
+<script type="text/javascript">
+function submitform() {
+  //$('#SeatAdd<?php echo '/'.$id.'/'.$seats; ?>Form').submit();
+  document.getElementById('TicketSplit<?php echo '/'.$id; ?>Form').submit();
+}
+</script>
 
 <div style="width:100%;float:left;">
     <form id="TicketSplit/<?php echo $id; ?>Form" method="post" action="/tickets/split/<?php echo $id; ?>" accept-charset="utf-8" class="theform">
                         <?php //echo $form->create('Payment', array('action' => 'split/'.$id)); ?>
                             <?php echo $form->input('Ticket.ticket1',array('value'=>'','type'=>'hidden')); ?>
                             <?php echo $form->input('Ticket.ticket2',array('value'=>'','type'=>'hidden')); ?>
-			<div style="float:left;"><?php echo $form->end('Submit'); ?></div>
+			<div style="float:left;"><?php //echo $form->end('Submit'); ?><a style="vertical-align:bottom;margin-left:0px;margin-right:20px;width:50%;" href="#" onclick="submitform()"><input style="width:100%;margin-right:0px;height:44px;" type="button" class="submits" value="Submit"></a></div>
 </div>

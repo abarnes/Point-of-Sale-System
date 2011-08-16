@@ -170,6 +170,10 @@ www.barnespos.com
 			    <td><b>Cost</b></td>
 			    <td>$<?php echo $u['Clock']['cst']; ?></td>
 			</tr>
+			<tr>
+			    <td><b>Total Tips</b></td>
+			    <td>$<?php echo $u['Clock']['tips']; ?></td>
+			</tr>
 		    </table>
 		</div>
             <?php echo $html->link(

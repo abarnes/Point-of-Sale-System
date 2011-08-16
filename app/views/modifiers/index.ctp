@@ -8,6 +8,13 @@ You may alter this code with the following limitations:
 Barnes POS Systems
 www.barnespos.com
 ------------------------------------------------------------------------------->
+<script type="text/javascript">
+$(document).ready(function(){	
+	$('#all').fadeIn(600);
+});
+</script>
+<div id="all" style="display:none">
+
 <?php echo $this->Paginator->options(array('url' => $this->passedArgs)); ?>
 <script type="text/javascript">  
 				function opend(id) {
@@ -47,9 +54,9 @@ www.barnespos.com
     
         <?php echo $form->create('Modifier', array('action' => 'add')); ?>
         <tr><td style="text-align:right;font-size:80%;">Name: </td><td><?php echo $form->input('name', array( 'label' => '')); ?></td></tr>
-        <tr><td style="text-align:right;font-size:80%;">Price: </td><td><?php echo $form->input('price', array( 'label' => '')); ?></td></tr>
+        <tr><td style="text-align:right;font-size:80%;">Price: $</td><td><?php echo $form->input('price', array( 'label' => '')); ?></td></tr>
         <tr><td style="text-align:right;font-size:80%;">Items: </td><td><?php echo $form->input('Item', array( 'label' => '')); ?>
-        <p>Hold the control key to select multiple items (command key on a Mac)</p>
+        <p style="font-size:80%;">Hold the control key to select multiple items (command key on a Mac)</p>
         </td></tr>
         <tr><td style="text-align:right;font-size:80%;">Description: </td><td><?php echo $form->input('description', array( 'label' => '')); ?></td></tr>
         <tr><td style="text-align:right;font-size:80%;">Enable: </td><td><?php echo $form->input('enable', array( 'label' => '','checked'=>true)); ?></td></tr>
@@ -178,4 +185,6 @@ www.barnespos.com
     <br/>
     <!-- prints X of Y, where X is current page and Y is number of pages -->
     <?php echo $this->Paginator->counter(); ?>
+</div>
+
 </div>

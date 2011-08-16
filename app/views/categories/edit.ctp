@@ -19,6 +19,8 @@ www.barnespos.com
             echo $html->link('<< Manage Categories',array('controller'=>'categories','action'=>'index'));
         }?>
         </div><br/>
+        
+<div style="width:60%;">
     
     <div class="label">
     <?php echo $form->create('Category', array('action' => 'edit/'.$id.'/'.$ac)); ?>
@@ -28,5 +30,5 @@ www.barnespos.com
     <?php echo $form->end('Update Category'); ?>
     </div>
 
-
+</div>
     

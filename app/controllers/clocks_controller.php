@@ -61,6 +61,8 @@ class ClocksController extends AppController {
 					if (strlen($sp[1])==1) {
 						$cost = $cost.'0';
 					}
+				} else {
+					$cost = $cost.'.00';
 				}
 				$clocks[$i]['Clock']['cst']=$cost;
 				$tc = $tc+$cost;
@@ -74,6 +76,8 @@ class ClocksController extends AppController {
 			if (strlen($sp[1])==1) {
 				$tc = $tc.'0';
 			}
+		} else {
+			$tc = $tc.'.00';
 		}
 		$this->set('tc',$tc);
 		$secs = $secs/3600;
@@ -104,36 +108,48 @@ class ClocksController extends AppController {
 			$this->redirect(array('controller'=>'users','action'=>'login'));
 		}
 		$this->set('user',$this->User->findById($id));
-		
-			$conditions = array('Clock.complete'=>'1','Clock.user_id'=>$id,'Clock.created >'=>date('Y-m-d', strtotime("-2 weeks")));
-			$this->paginate = array('limit' => 20,'conditions'=>$conditions);
-			$clocks = $this->paginate('Clock');
 			
-			$seats = $this->Ticket->find('all',array('conditions'=>array('Ticket.user_id'=>$id,'Ticket.status >'=>'1','Ticket.created >'=>date('Y-m-d',time()))));
+			$a = $this->Clock->find('first',array('conditions'=>array('Clock.user_id'=>$id,'Clock.complete'=>'0'),'order'=>'Clock.in DESC'));
 			
-			//add data for shifts, hours
-			$i=0;
-			$total_time=0;
-			$total_cost = 0;
-			foreach ($clocks as $a) {
-				$diff = strtotime($a['Clock']['out'])-strtotime($a['Clock']['in']);
-				$total_time = $total_time+$diff;
-				
-				$clocks[$i]['Clock']['time']=$this->_timeBetween(strtotime($a['Clock']['in']),strtotime($a['Clock']['out']));
-				$clocks[$i]['Clock']['cst']=$a['Clock']['cost'];
-				$total_cost = $total_cost+$a['Clock']['cost'];
-				$i++;
+			$seats = $this->Ticket->find('all',array('conditions'=>array('Ticket.user_id'=>$id,'Ticket.created >'=>date('Y-m-d H:i:s',strtotime($a['Clock']['in'])))));
+			$ids = $this->Ticket->find('list',array('fields'=>array('Ticket.id'),'conditions'=>array('Ticket.user_id'=>$id,'Ticket.created >'=>date('Y-m-d H:i:s',strtotime($a['Clock']['in'])))));
+			$p = $this->Payment->find('all',array('conditions'=>array('Payment.ticket_id'=>$ids)));
+			
+			$cctips = 0;
+			foreach ($p as $p) {
+				$cctips = $cctips+$p['Payment']['tip'];
+			}
+			$sp = explode('.',$cctips);
+			if (isset($sp[1])) {
+				if (strlen($sp[1])==1) {
+					$cctips = $cctips.'0';
+				}
+			} else {
+				$cctips = $cctips.'.00';
+			}
+			
+			//add data for shift
+			$a['Clock']['cctips'] = $cctips;
+			$a['Clock']['time']=$this->_timeBetween(strtotime($a['Clock']['in']),time());
+			$diff = time()-strtotime($a['Clock']['in']);
+			$hours = $a['Clock']['time']/3600;
+			if ($userInfo['User']['rate1']==$a['Clock']['rate']) {
+				$a['Clock']['rt'] = 'Rate 1';
+			} elseif ($userInfo['User']['rate2']==$a['Clock']['rate']) {
+				$a['Clock']['rt'] = 'Rate 2';
+			} elseif ($userInfo['User']['rate3']==$a['Clock']['rate']) {
+				$a['Clock']['rt'] = 'Rate 3';
+			} else {
+				$a['Clock']['rt'] = 'Other';
 			}
 		
 		//calculate sales statistics, etc.
 		$total = 0;
 		$tickets = 0;
 		$customers = 0;
-		//die(print($seats));
 		foreach ($seats as $t) {
 			foreach ($t['Seat'] as $s) {
 				$total=$total+$s['total'];
-				
 				$customers++;
 			}
 			$tickets++;
@@ -141,33 +157,15 @@ class ClocksController extends AppController {
 		$this->set('ticket_count',$tickets);
 		$this->set('cust_count',$customers);
 		$this->set('total_sales',$total);
-		if ($total_time!=0) {
-			$new = $total/$total_time;
+	
+		if ($diff!=0) {
+			$new = $total/$diff;
 		} else {
 			$new = 0;
 		}
 		$new = $new*3600;
 		$this->set('ratio',round($new,'2'));
-		
-		//total time worked
-		$hours = $total_time/3600;
-		$hours = floor($hours);
-		$secs = $total_time%3600;
-		$mins = round($secs/60);
-		if ($mins<10) {
-			$mins = '0'.$mins;
-		}
-		$this->set('total_time',$hours.':'.$mins);
-		$total_cost = round($total_cost,'2');
-		$sp = explode('.',$total_cost);
-		if (isset($sp[1])) {
-			if (strlen($sp[1])==1) {
-				$total_cost = $total_cost.'0';
-			}
-		}
-		$this->set('total_cost',$total_cost);
-		
-		$this->set('clocks',$clocks);
+		$this->set('clocks',$a);
 	}
 	
 	function report($id,$redirect=null,$index=null) {
