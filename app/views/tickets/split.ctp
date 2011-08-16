@@ -105,6 +105,7 @@ www.barnespos.com
 
 <div id="droparea">
 	<h5>Drag the seat boxes into the ticket boxes to split the ticket into new tickets.  Click "Add Ticket" to create additional new tickets.</h5>
+	<input style="width:90px;height:28px;font-size:1em;margin:10px 4px 10px 0px;" type="button" class="submits" value="Back" onclick="parent.history.back();">
 	<hr style="width:100%;"/>
 	
         <div style="width:100%;min-height:140px;">

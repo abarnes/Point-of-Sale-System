@@ -575,14 +575,63 @@ class ClocksController extends AppController {
 			$data['Clock']['out']=date('Y-m-d H:i:s',time());
 			if ($this->Clock->save($data)) {
 				$this->Session->setFlash($userInfo['User']['username'].' clocked out.');
-				$this->redirect($this->Auth->logout());
+				$this->redirect('/clocks/over/'.$f['Clock']['id']);
+				//$this->redirect($this->Auth->logout());
 			} else {
 				//failed to save clock in
 				$this->Session->setFlash('Error: Could not clock out. (clocks,logout_check)');
-				$this->redirect($this->Auth->logout());
+				$this->redirect('/pages/menu');
 			}
 		} else {
 			$this->redirect($this->Auth->logout());
+		}
+	}
+	
+	function over($id) {
+		$this->layout = 'noheader_timeout';
+		$f = $this->Clock->findById($id);
+		
+		//calculate credit card tips
+		$tick = $this->Ticket->find('list',array('fields'=>array('Ticket.id'),'conditions'=>array('Ticket.created >='=>date('Y-m-d H:i:s',strtotime($f['Clock']['in'])),'Ticket.user_id'=>$f['Clock']['user_id'])));
+		$p = $this->Payment->find('all',array('conditions'=>array('Payment.ticket_id'=>$tick)));
+		$ctips = 0;
+		foreach ($p as $a) {
+			$ctips = $ctips+$a['Payment']['tip']; 
+		}
+		//format the total
+		$sp = explode('.',$ctips);
+		if (isset($sp[1])) {
+			if (strlen($sp[1])==1) {
+				$ctips = $ctips.'0';
+			}
+		} else {
+			$ctips = $ctips.'.00';
+		}
+		
+		if (!empty($this->data)) {
+			$tips = $this->data['Clock']['tips']+$ctips;
+			$this->Clock->id = $id;
+			if ($this->Clock->saveField('tips',$tips)) {
+				$this->Session->setFlash($f['User']['full_name'].' Clocked Out.');
+				$this->redirect($this->Auth->logout());
+			} else {
+				$this->Session->setFlash('Error: Could not save tips. (clocks,over)');
+			}
+		} else {
+			$f['Clock']['time']=$this->_timeBetween(strtotime($f['Clock']['in']),strtotime($f['Clock']['out']));
+			$user = $this->User->findById($f['Clock']['user_id']);
+			if ($user['User']['rate1']==$f['Clock']['rate']) {
+				$f['Clock']['rt'] = 'Rate 1';
+			} elseif ($user['User']['rate2']==$f['Clock']['rate']) {
+				$f['Clock']['rt'] = 'Rate 2';
+			} elseif ($user['User']['rate3']==$f['Clock']['rate']) {
+				$f['Clock']['rt'] = 'Rate 3';
+			} else {
+				$f['Clock']['rt'] = 'Other';
+			}
+			$f['Clock']['ctips'] = $ctips;
+			$this->set('u',$f);
+			$this->set('id',$id);
 		}
 	}
 	

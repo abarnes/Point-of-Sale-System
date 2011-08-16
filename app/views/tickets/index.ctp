@@ -18,6 +18,9 @@ function decision(url){
 function voi(url){
     if(confirm('Are you sure you want to void this ticket?')) location.href = url;
 }
+function uvoi(url){
+    if(confirm('Are you sure you want to revert this ticket\'s status to submitted?')) location.href = url;
+}
 </script>
 
 <?php echo $this->Paginator->options(array('url' => $this->passedArgs)); ?>
@@ -109,13 +112,13 @@ function voi(url){
 	    //echo $html->link('View',array('action'=>'view/'.$u['Ticket']['id']));
 	    if ($en != 'Paid' && $en !='Void') {
 		echo '<input style="width:70px;height:28px;font-size:1em;margin:0px 4px 0px 0px;" type="button" class="submits" value="Pay" onclick="parent.location=\'/payments/pay/'.$u['Ticket']['id'].'\'">';
+		if (count($u['Seat'])>1) {
+		    echo '<input style="width:70px;height:28px;font-size:1em;margin:0px 4px 0px 0px;" type="button" class="submits" value="Split" onclick="parent.location=\'/tickets/split/'.$u['Ticket']['id'].'\'">';
+		    //echo $html->link('Split',array('action'=>'split/'.$u['Ticket']['id']));
+		}
 		//echo $html->link('Pay',array('controller'=>'payments','action'=>'pay/'.$u['Ticket']['id']));
 		echo '<input style="width:70px;height:28px;font-size:1em;margin:0px 4px 0px 0px;" type="button" class="submits" value="Edit" onclick="parent.location=\'/tickets/edit/'.$u['Ticket']['id'].'\'">';
 		//echo $html->link('Edit',array('controller'=>'seats','action'=>'edit/'.$u['Ticket']['id'])); 
-	    }
-	    if (count($u['Seat'])>1) {
-		echo '<input style="width:70px;height:28px;font-size:1em;margin:0px 4px 0px 0px;" type="button" class="submits" value="Split" onclick="parent.location=\'/tickets/split/'.$u['Ticket']['id'].'\'">';
-		//echo $html->link('Split',array('action'=>'split/'.$u['Ticket']['id']));
 	    }
 	    echo '<input style="width:70px;height:28px;font-size:1em;margin:0px 4px 0px 0px;" type="button" class="submits" value="Status" onclick="opend('.$u['Ticket']['id'].')">';
 	} else {
@@ -145,7 +148,11 @@ function voi(url){
 	</script>
 	<div id="dialog<?php echo $u['Ticket']['id']; ?>" title="Change Ticket Status - <?php echo $u['Ticket']['dailyid']; ?>">
 	    <?php if ($all=='0') {
-		echo '<input style="width:150px;height:80px;font-size:1em;margin:0px 20px 0px 0px;" type="button" class="submits" value="Void" onclick="voi(\'/tickets/void/'.$u['Ticket']['id'].'/0\')"/>';
+		if ($u['Ticket']['status']!='3') {
+		    echo '<input style="width:150px;height:80px;font-size:1em;margin:0px 20px 0px 0px;" type="button" class="submits" value="Void" onclick="voi(\'/tickets/void/'.$u['Ticket']['id'].'/0\')"/>';
+		} else {
+		    echo '<input style="width:150px;height:80px;font-size:1em;margin:0px 20px 0px 0px;" type="button" class="submits" value="Undo Void" onclick="uvoi(\'/tickets/uvoid/'.$u['Ticket']['id'].'/0\')"/>';
+		}
 		echo '<input style="width:150px;height:80px;font-size:1em;margin:0px 4px 0px 0px;" type="button" class="submits" value="Delete" onclick="decision(\'/tickets/delete/'.$u['Ticket']['id'].'/0\')">';
 		/*echo $html->link(
 				    'Delete', 
@@ -154,7 +161,11 @@ function voi(url){
 				    'Are You Sure You Want To Delete This Ticket?'
 			    );*/
 	     } else {
-		echo '<input style="width:150px;height:80px;font-size:1em;margin:0px 20px 0px 0px;" type="button" class="submits" value="Void" onclick="voi(\'/tickets/void/'.$u['Ticket']['id'].'/1\')"/>';
+		if ($u['Ticket']['status']!='3') {
+		    echo '<input style="width:150px;height:80px;font-size:1em;margin:0px 20px 0px 0px;" type="button" class="submits" value="Void" onclick="voi(\'/tickets/void/'.$u['Ticket']['id'].'/1\')"/>';
+		} else {
+		    echo '<input style="width:150px;height:80px;font-size:1em;margin:0px 20px 0px 0px;" type="button" class="submits" value="Undo Void" onclick="uvoi(\'/tickets/uvoid/'.$u['Ticket']['id'].'/1\')"/>';
+		}
 		echo '<input style="width:150px;height:80px;font-size:1em;margin:0px 4px 0px 0px;" type="button" class="submits" value="Delete" onclick="decision(\'/tickets/delete/'.$u['Ticket']['id'].'/1\')">';
 		/*echo $html->link(
 				'Delete', 

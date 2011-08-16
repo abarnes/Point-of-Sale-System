@@ -444,7 +444,7 @@ class TicketsController extends AppController {
 		
 		$this->Ticket->id = $id;
 		if ($this->Ticket->saveField('status','3')) {
-			$this->Session->setFlash('Ticket Successfully Voided.');
+			$this->Session->setFlash('Ticket Voided.');
 			if ($redirect==null || $redirect=='0') {
 				$this->redirect(array('action'=>'index'));	
 			} else {
@@ -452,6 +452,32 @@ class TicketsController extends AppController {
 			}	
 		} else {
 			$this->Session->setFlash('Error saving ticket status (tickets,void)');
+			if ($redirect==null || $redirect=='0') {
+				$this->redirect(array('action'=>'index'));	
+			} else {
+				$this->redirect(array('action'=>'index/all'));
+			}
+		}
+	}
+	
+	function uvoid($id,$redirect=null) {
+		//check auth status
+		$userinfo = $this->Auth->user();
+		if ($userinfo['User']['level']!='1') {
+			$this->redirect(array('controller'=>'users','action' => 'quick_in'));
+			$this->Session->setFlash('You Do Not Have Permission To Access This Page');
+		}
+		
+		$this->Ticket->id = $id;
+		if ($this->Ticket->saveField('status','0')) {
+			$this->Session->setFlash('Ticket status reverted to submitted.');
+			if ($redirect==null || $redirect=='0') {
+				$this->redirect(array('action'=>'index'));	
+			} else {
+				$this->redirect(array('action'=>'index/all'));
+			}	
+		} else {
+			$this->Session->setFlash('Error saving ticket status (tickets,uvoid)');
 			if ($redirect==null || $redirect=='0') {
 				$this->redirect(array('action'=>'index'));	
 			} else {
@@ -832,9 +858,14 @@ class TicketsController extends AppController {
 			$seats[$se]['seat'] = $se;
 			$seats[$se]['orig_seat'] = $or;
 			$sp = explode('.',$t['Seat']['total']);
-			if (strlen($sp[1])==1) {
-				$pr = $pr.'0';
+			if (isset($sp[1])) {
+				if (strlen($sp[1])==1) {
+					$pr = $pr.'0';
+				}
+			} else {
+				$pr = $pr.'.00';
 			}
+
 			$seats[$se]['total'] = $pr;
 			
 			$newt = rtrim($t['Seat']['items'],',');
@@ -885,8 +916,12 @@ class TicketsController extends AppController {
 						}
 					
 					$sp = explode('.',$p);
-					if (strlen($sp[1])==1) {
-						$p = $p.'0';
+					if (isset($sp[1])) {
+						if (strlen($sp[1])==1) {
+							$p = $p.'0';
+						}
+					} else {
+						$p = $p.'.00';
 					}
 					//put array together
 					$append=array($items[$th]=>array('mods'=>$test,'price'=>$p));
@@ -897,8 +932,12 @@ class TicketsController extends AppController {
 		}
 		//format the total
 		$sp = explode('.',$total);
-		if (strlen($sp[1])==1) {
-			$total = $total.'0';
+		if (isset($sp[1])) {
+			if (strlen($sp[1])==1) {
+				$total = $total.'0';
+			}
+		} else {
+			$p = $p.'.00';
 		}
 
 		$this->set('total',$total);
