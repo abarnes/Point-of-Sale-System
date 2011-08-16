@@ -95,6 +95,7 @@ www.barnespos.com
 				<li><span style="color:white;"><?php echo $m['name']; ?></span><span class="toggle"><input type="checkbox" onclick="modifd('<?php echo $sn; ?>','<?php echo $i['id']; ?>','<?php echo $m['id']; ?>','<?php echo $m['name']; ?>')" id="<?php echo $m['id'].'m'.$sn.'k'.$i['id']; ?>"/></span></li>
 				<?php } ?>
 			    <?php } ?>
+                                <li><input type="text" id="<?php echo 'custom_m'.$sn.'k'.$i['id']; ?>" style="width:550px" placeholder="Other Instructions"/></li>
 			    </ul>
                             </form>
 			    
@@ -122,6 +123,7 @@ www.barnespos.com
 				<li><span style="color:white;"><?php echo $m['name']; ?></span><span class="toggle"><input type="checkbox" onclick="modif_edit('<?php echo $sn; ?>','<?php echo $i['id']; ?>','<?php echo $m['id']; ?>','<?php echo $m['name']; ?>')" id="edit<?php echo $m['id'].'m'.$sn.'k'.$i['id']; ?>"/></span></li>
 				<?php } ?>
 			    <?php } ?>
+                                <li><input type="text" id="<?php echo 'custom_mm'.$sn.'k'.$i['id']; ?>" style="width:550px" placeholder="Other Instructions"/></li>
 			    </ul>
                             </form>
                             <span style="display:none;" id="<?php echo $sn; ?>edits<?php echo $i['id']; ?>"></span>
@@ -200,13 +202,20 @@ www.barnespos.com
                                                 var i=0;
                                                 for (i=0;i<=sixth;i++) {
                                                     var txt = third[i];
-                                                    //alert(txt);
-                                                    document.getElementById("edit"+txt+"m"+sn+"k"+id).checked = true;
-                                                    document.getElementById("edit"+txt+"m"+sn+"k"+id).value = '1';
+                                                     if (txt.charAt(0)=='|') {
+							document.getElementById("custom_mm"+sn+"k"+id).value = txt.replace('|','');				
+						    } else {
+                                                        document.getElementById("edit"+txt+"m"+sn+"k"+id).checked = true;
+                                                        document.getElementById("edit"+txt+"m"+sn+"k"+id).value = '1';
+                                                    }
                                                 }   
                                             } else {
-                                                document.getElementById("edit"+second+"m"+sn+"k"+id).checked = true;
-                                                document.getElementById("edit"+second+"m"+sn+"k"+id).value = '1';
+                                                if (second.charAt(0)=='|') {
+						    document.getElementById("custom_mm"+sn+"k"+id).value = second.replace('|','');				
+				                } else {
+                                                    document.getElementById("edit"+second+"m"+sn+"k"+id).checked = true;
+                                                    document.getElementById("edit"+second+"m"+sn+"k"+id).value = '1';
+                                                }
                                             }
                                             var jQT = new $.jQTouch();
                                             jQT.goTo('#itmedit'+sn+'-'+id);
@@ -254,6 +263,12 @@ function remo(sn,txt,t) {
     function finishd(sn,txt,id) {
         var t = this["t"+sn+"k"+id];
         var tx = this["tx"+sn+"k"+id];
+        var fi = document.getElementById("custom_m"+sn+"k"+id).value;
+	if (fi!='') {
+		t+='|'+fi+':';
+		tx+=fi+' ';
+	}
+        
         var c = sn-1;
 	$('#sseat'+sn).append('<div class="itemdiv" id="itemdiv'+sn+'k'+id+'-'+t+'"><span id="'+sn+'k'+id+'-'+t+'" class="iteml"><a href="#" onclick="clicked(\''+sn+'\',\''+id+'\',\''+t+'\')">'+txt+'</a><a id="a'+sn+'k'+id+'-'+t+'" href="#" onclick="remo(\''+sn+'\',\''+id+'('+t+'),\',\''+sn+'k'+id+'-'+t+'\')"><?php echo $html->image('close.png',array('alt'=>'Barnes POS System','style'=>'float:right;')); ?></a></span><p style="font-size:70%" id="p'+sn+'k'+id+'-'+t+'">'+tx+'</p></div>');
 	
@@ -270,13 +285,20 @@ function remo(sn,txt,t) {
                 var i=0;
                 for (i=0;i<=sixth;i++) {
                     var txt = third[i];
-                    //alert(txt);
-                    document.getElementById(txt+"m"+sn+"k"+id).checked = false;
-                    document.getElementById(txt+"m"+sn+"k"+id).value = '0';
+                    if (txt.charAt(0)=='|') {
+			document.getElementById("custom_m"+sn+"k"+id).value = '';				
+		    } else {
+                        document.getElementById(txt+"m"+sn+"k"+id).checked = false;
+                        document.getElementById(txt+"m"+sn+"k"+id).value = '0';
+                    }
                 }   
             } else {
-                document.getElementById(second+"m"+sn+"k"+id).checked = false;
-                document.getElementById(second+"m"+sn+"k"+id).value = '0';
+                if (txt.charAt(0)=='|') {
+		    document.getElementById("custom_m"+sn+"k"+id).value = '';				
+		} else {
+                    document.getElementById(second+"m"+sn+"k"+id).checked = false;
+                    document.getElementById(second+"m"+sn+"k"+id).value = '0';
+                }
             }
         }
         this["t"+sn+"k"+id]='';
@@ -318,6 +340,30 @@ function remo(sn,txt,t) {
 	
         gt = document.getElementById(sn+"edits"+id).innerHTML;
 	gtvf = document.getElementById(sn+"editsvf"+id).innerHTML;
+        
+        if (gtvf.indexOf('|')!=-1 && gtvf.indexOf(':')!=-1) {
+                                var third = gtvf.split(":");
+                                var fourth = third.length;
+                                var sixth = fourth-2;
+                                var i=0;
+                                for (i=0;i<=sixth;i++) {
+				        var ff = third[i];
+					if (third[i]!='') {
+				             if (ff.indexOf('|')=='0') {
+				                  third.splice(i,1);
+						  var ne = ff.slice('1',ff.length);
+						  gt = gt.replace(ne+' ',"");
+				             }
+					}
+				}
+				gtvf = third.join(':');
+	}
+	
+	var fi = document.getElementById("custom_mm"+sn+"k"+id).value;
+	if (fi!='') {
+		gtvf+='|'+fi+':';
+		gt+=fi+' ';
+	}
         
         var d = document.getElementById('sseat'+sn);
 	var r = document.getElementById('itemdiv'+sn+'k'+id+'-'+window.newt);
