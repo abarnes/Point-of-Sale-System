@@ -405,7 +405,7 @@ class PaymentsController extends AppController {
 		$signature = null;
 		$toSign = "http://173.246.103.0:9000/pos/api/location/".$loc."/receiptjson?sequence=2200012&signature=";
 		// Read the private key from the file.
-		$fp = fopen("/Users/austin 1/Sites/barnespossystem/app/webroot/files/key.pem", "r");
+		$fp = fopen("/Users/Schwamm/Sites/barnespossystem/app/webroot/files/key.pem", "r");
 		$priv_key = fread($fp, 8192);
 		fclose($fp);
 		$pkeyid = openssl_get_privatekey($priv_key);
@@ -418,7 +418,6 @@ class PaymentsController extends AppController {
 		$hex = bin2hex( $signature );
 		//$toSign .= "/" . $hex;
 		$toSign .= $hex;
-		//return $toSign;
 		//die(print($toSign));
 	
 		//json encoded receipt details ----------------------------------------------------------------------------	
@@ -479,20 +478,40 @@ class PaymentsController extends AppController {
 			//add to data array
 			$data['order']['items'][] = array('item'=>$name,'quantity'=>$quantity,'price'=>$price);
 		}
+		//$rr['rcpt'] = $data;
+		//$data = array('test'=>'value');
 		$json = json_encode($data);
-		$data = array('rcpt'=>$json);
-		die(print($toSign));
+		//$data = array('rcpt'=>$json);
+		//die(print($json));
+		
+		$options = array(
+			//CURLOPT_HEADER => 0,
+			//CURLOPT_HTTPHEADER=>array('Content-Type: application/json;'),
+			CURLOPT_URL=>$toSign,
+			//CURLOPT_URL=>'http://austinbarnes.net/test.php',
+			CURLOPT_POST=>1,
+			//CURLOPT_FRESH_CONNECT => 1, 
+			//CURLOPT_RETURNTRANSFER => 1, 
+			//CURLOPT_FORBID_REUSE => 1, 
+			//CURLOPT_TIMEOUT => 10, 
+			CURLOPT_POSTFIELDS => array('rcpt'=>$json)
+			
+			//CURLOPT_FOLLOWLOCATION=>TRUE,
+			//CURLOPT_POSTFIELDS=>http_build_query(array('ff'=>'fg')),
+			//curl_setopt($ch, CURLOPT_POSTFIELDS, $json),
+		);
 		
 		$ch = curl_init();
-		curl_setopt($ch, CURLOPT_HTTPHEADER, array('Content-Type: application/json'));
-		curl_setopt($ch, CURLOPT_URL, $toSign);
-		curl_setopt($ch, CURLOPT_FOLLOWLOCATION, TRUE);
-		curl_setopt($ch,CURLOPT_POST,1);
-		curl_setopt($ch, CURLOPT_POSTFIELDS, $data);
-		curl_setopt ($ch, CURLOPT_RETURNTRANSFER, true);
-		$result = curl_exec ($ch);
-		$code = curl_getinfo($ch, CURLINFO_HTTP_CODE);
-		curl_close($ch);
+		curl_setopt_array($ch, $options);
+		//$result = curl_exec ($ch);
+		//$code = curl_getinfo($ch, CURLINFO_HTTP_CODE);
+		if( ! $result = curl_exec($ch)) 
+		{ 
+		    trigger_error(curl_error($ch)); 
+		} 
+		curl_close($ch); 
+		//return $result;
+		
 		die(print($result));
 		
 		if ($code>=400) {
