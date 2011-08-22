@@ -384,6 +384,7 @@ function remo(num,str) {
 				<!--------submit form----->
 				<script type="text/javascript">
 				function submitfr() {
+								
 				  document.getElementById('PaymentPay<?php echo '/'.$ticket['Ticket']['id']; ?>Form').submit();
 				}
 				</script>
@@ -542,7 +543,148 @@ function remo(num,str) {
 </div>
 
 </td></tr></table>
+
 <!--Printer View -------------------->
-<div id="printable">
-		<p>test</p>		
-</div>
+		<div style="min-width:320px;float:left;" id="printable">
+				<div id="pays" style="background-color:inherit;">
+								<h3>Payments</h3>
+							
+				</div>
+				<div style="background-color:white;">
+								<div style="text-align:center;display:none;">
+								<span style="color:black;">
+									<br/>
+									<b><?php echo $s['business_name']; ?></b><br/>
+												<?php
+												if ($s['address1']!='') {
+													echo $s['address1'].'<br/>';			
+												}
+												if ($s['address2']!='') {
+													echo $s['address2'].'<br/>';			
+												}
+												if ($s['address3']!='') {
+													echo $s['address3'].'<br/>';			
+												} ?>
+												<div style="height:5px;"></div>
+												<?php
+												if ($s['phone1']!='') {
+													echo $s['phone1'].'<br/>';			
+												}
+												if ($s['phone2']!='') {
+													echo $s['phone2'].'<br/>';			
+												} ?>
+												<div style="height:5px;"></div>
+												
+												<?php
+												if ($s['website']!='') {
+													echo $s['website'].'<br/>';			
+												} ?>
+												
+												
+								</span>
+								</div>
+								
+								<div style="margin:9px;">
+								<span style="color:black;">
+												
+												<p style="font-size:85%;width:100%;">
+												    <span style="float:left;">ID: <?php echo $ticket['Ticket']['dailyid']; ?><br/>
+												    <?php echo $ticket['Type']['name']; ?><br/>
+												    <?php if ($ticket['Type']['use_tables']=='1') { ?> 
+												    Table: <?php echo $ticket['Ticket']['table']; ?><br/>
+												    <?php } ?>
+												    Server: <?php echo $ticket['User']['username']; ?>
+												    </span>
+												    <span style="float:right;text-align:right;">
+																<?php echo date("m-d-Y",strtotime($ticket['Ticket']['created'])); ?><br/>
+																<?php echo date("g:i a",strtotime($ticket['Ticket']['created'])); ?>
+												    </span>
+												</p>
+												
+								<?php if ($ticket['Type']['use_seats']=='1') { ?>
+								
+												<?php foreach ($seats as $ss) { ?>
+												<table style="font-size:85%;">
+												    <tr>
+													<th>Seat <?php echo $ss['seat']; ?>
+													    <?php if ($ss['orig_seat']!='0' && $ss['orig_seat']!=$ss['seat']) {
+														echo '(Originally Seat '.$ss['orig_seat'].')';
+													    } ?>
+													    <!--<span style="float:right;">$<?php //echo $ss['total']?></span>-->
+													</th>
+												    </tr>
+												    <?php foreach ($ss['item'] as $data) { ?>
+												    <tr>
+													<td>
+													<span style="float:left;"><?php echo key($data); ?></span><span style="float:right;">$<?php echo $data[key($data)]['price']; ?></span>
+													<br/>
+													<p style="font-size:70%">
+													<?php
+													    $sstr = '';
+													    foreach ($data[key($data)]['mods'] as $m) { 
+														$sstr = $sstr.$m.', '; 
+													    }
+													    echo rtrim($sstr,', ');
+													    ?>
+													</p>
+													</td>
+												    </tr>
+												    <?php } ?>
+												</table>
+												<div style="text-align:right;margin-right:5px;font-size:85%;">
+												Seat <?php echo $ss['seat']; ?> Total: $<?php echo $ss['total']; ?>
+												</div>
+												
+												<?php } ?>
+				
+								<?php } else { ?>
+												<?php foreach ($seats as $ss) { ?>
+												<table style="font-size:85%;">
+												    <tr>
+													<th>Order</th>
+												    </tr>
+												    <?php foreach ($ss['item'] as $data) { ?>
+												    <tr>
+													<td>
+													<span style="float:left;"><?php echo key($data); ?></span><span style="float:right;">$<?php echo $data[key($data)]['price']; ?></span>
+													<br/>
+													<p style="font-size:70%">
+													<?php
+													    $sstr = '';
+													    foreach ($data[key($data)]['mods'] as $m) { 
+														$sstr = $sstr.$m.', '; 
+													    }
+													    echo rtrim($sstr,', ');
+													    ?>
+													</p>
+													</td>
+												    </tr>
+												    <?php } ?>
+												</table>
+												
+												<?php } ?>
+												
+								<?php } ?>
+								<br/>
+												
+										<p style="font-size:85%;width:100%;">
+												    <span style="float:left;margin-left:100px;">Subtotal: <br/>
+												    Tax (<?php echo trim(rtrim($s['tax'],'0'),'0'); ?>%):<br/>
+												    Total:<br/>
+												    </span>
+												    <span style="float:right;">
+																$<?php echo $total; ?><br/>
+																$<?php echo $tax; ?><br/>
+																$<?php echo $ntotal; ?>
+												    </span>	    
+										</p>
+										
+										<br/><br/><br/>		    
+								                <div id="receipt">
+										</div>
+										<br/>
+								
+								</span>				
+								</div>
+				</div>
+		</div>
