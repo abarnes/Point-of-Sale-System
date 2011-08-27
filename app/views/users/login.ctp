@@ -10,11 +10,22 @@ www.barnespos.com
 ------------------------------------------------------------------------------->
 <script>
 		$(function(){
-			$('#UserUsername').keyboard();
+			$('#UserUsername').keyboard({
+                                stayOpen:false,
+                                autoAccept:true
+                            });
 		});
                 $(function(){
-			$('#UserPassword').keyboard();
+			$('#UserPassword').keyboard({
+                                stayOpen:false,
+                                autoAccept:true
+                            });
 		});
+    $(window).keypress(function(e) {
+        if(e.keyCode == 13) {
+            alert('You pressed enter!');
+        }
+    });
 </script>
 
 <h3>Clock In</h3>
