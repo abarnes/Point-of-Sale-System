@@ -57,7 +57,7 @@ if (isset($sp[1])) {
 </style>
 
 <div id="non-printable">
-				
+			
 <script type="text/javascript">
 var balance = <?php echo $ntotal; ?>;
 
@@ -85,9 +85,10 @@ function complete(type){
 }
 
 function opend(type){
-			document.getElementById(type+"-amt").value = window.balance;
+			document.getElementById(type+"-amt").value = window.balance.toFixed(2);
 			$('#dialog-'+type).dialog('open');	
 }
+
 function calc(type,num){
 			document.getElementById(type+"-amt").value += num;	
 }
@@ -343,7 +344,7 @@ function remo(num,str) {
 <br/>
 
 <div style="float:left;">
-				<h3>Pay - Ticket <?php echo $ticket['Ticket']['dailyid']; ?>
+				<h3>Ticket <?php echo $ticket['Ticket']['dailyid']; ?>
 				<?php if ($ticket['Type']['use_tables']=='1') { ?> 
 				, Table <?php echo $ticket['Ticket']['table']; ?><?php } ?>
 				</h3>
@@ -356,7 +357,7 @@ function remo(num,str) {
 									<h4>Total: $<?php echo $ntotal; ?></h4>
 </div>
 
-<hr style="width:100%;"/><br/>
+<hr style="width:100%;float:left;"/><br/>
 
 <table style="width:100%;background-color:transparent;border-color:transparent;"><tr><td style="width:670px;background-color:transparent;border-color:transparent;">
 <!--<div style="margin-right:336px;">-->
@@ -413,9 +414,9 @@ function remo(num,str) {
 							
 				</div>
 				<div style="background-color:white;">
-								<div style="text-align:center;display:none;">
+						<br/>
+								<div style="text-align:center;display:none">
 								<span style="color:black;">
-									<br/>
 									<b><?php echo $s['business_name']; ?></b><br/>
 												<?php
 												if ($s['address1']!='') {
