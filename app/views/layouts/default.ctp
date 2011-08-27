@@ -61,9 +61,11 @@ www.barnespos.com
 		<?php } ?>
 		</div>
 		
+		<div id="mid">
 		<hr style="margin-right:30px;"/>
 		<h6><?php echo $session->flash('auth'); ?></h6>
 		<h6><?php echo $session->flash(); ?></h6>
+		</div>
 		
 		<?php echo $content_for_layout; ?>
         

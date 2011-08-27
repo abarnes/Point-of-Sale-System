@@ -14,7 +14,7 @@ class PaymentsController extends AppController {
 	var $name = 'Payments';
         //var $layout = 'default';
 	var $uses = array('Payment','Ticket','Setting','Seat','Item','Modifier','Type','Discount');
-	var $helpers = array('Html', 'Form', 'Time', 'javascript','Qrcode');
+	var $helpers = array('Html', 'Form', 'Time', 'javascript');
 	var $components = array('Auth','Session');
         
         function beforeFilter() {
@@ -381,12 +381,11 @@ class PaymentsController extends AppController {
 		//codes for errors:
 		// b - 403 error, authentication with gimme failed     c - other error (apache response over 399)
 		if ($resp == 'b') {
-			//echo 'Request Denied.  Your subscription may have expired, or Gimme\'s servers may be down.';
+			echo 'Request Denied.  Your subscription may have expired, or Gimme\'s servers may be down.';
 		} elseif (substr($resp,0,1) == 'c') {
-			//echo 'Gimme\'s server returned an error ('.substr($resp,'1').'); check your Gimme settings.';
+			echo 'Gimme\'s server returned an error ('.substr($resp,'1').'); check your Gimme settings.';
 		} else {
-			//echo $resp;
-			$this->set('url',$resp);
+			echo $resp;
 		}
 	}
 	
@@ -406,7 +405,7 @@ class PaymentsController extends AppController {
 		$signature = null;
 		$toSign = "http://173.246.103.0:9000/pos/api/location/".$loc."/receiptjson?sequence=2200012&signature=";
 		// Read the private key from the file.
-		$fp = fopen("/Users/austin 1/Sites/barnespossystem/app/webroot/files/key.pem", "r");
+		$fp = fopen("/Users/Schwamm/Sites/barnespossystem/app/webroot/files/key.pem", "r");
 		$priv_key = fread($fp, 8192);
 		fclose($fp);
 		$pkeyid = openssl_get_privatekey($priv_key);
@@ -433,10 +432,10 @@ class PaymentsController extends AppController {
 		}
 		
 		$open = date("Y-m-d'6'h:i:s",strtotime($ticket['Ticket']['created']));
-		$open = str_replace("'6'","T",$open);
+		$open = str_replace("'6'","'T'",$open);
 		$close = date("Y-m-d'6'h:i:s",strtotime($ticket['Payment'][0]['created']));
-		$close = str_replace("'6'","T",$close);
-		$data = array('locationid'=>$loc,'openingtime'=>$open,'closingtime'=>$close,'totalamt'=>$ticket['Payment'][0]['amount'],'paymentmethod'=>$ticket['Payment'][0]['type']);
+		$close = str_replace("'6'","'T'",$close);
+		$data = array('receipt'=>array('locationid'=>$loc,'openingtime'=>$open,'closingtime'=>$close,'totalamt'=>$ticket['Payment'][0]['amount'],'paymentmethod'=>$ticket['Payment'][0]['type']));
 		$its = array();
 		foreach ($ticket['Seat'] as $sts) {
 			$newt = rtrim($sts['items'],',');
@@ -479,24 +478,41 @@ class PaymentsController extends AppController {
 			//add to data array
 			$data['order']['items'][] = array('item'=>$name,'quantity'=>$quantity,'price'=>$price);
 		}
+		//$rr['rcpt'] = $data;
+		//$data = array('test'=>'value');
 		$json = json_encode($data);
-	
-		//-----set up cURL to send data--------------------------------------------------------
+		//$data = array('rcpt'=>$json);
+		//die(print($json));
+		
 		$options = array(
+			//CURLOPT_HEADER => 0,
+			//CURLOPT_HTTPHEADER=>array('Content-Type: application/json;'),
 			CURLOPT_URL=>$toSign,
+			//CURLOPT_URL=>'http://austinbarnes.net/test.php',
 			CURLOPT_POST=>1,
-			CURLOPT_POSTFIELDS => array('rcpt'=>$json),
-			CURLOPT_RETURNTRANSFER => true
+			//CURLOPT_FRESH_CONNECT => 1, 
+			//CURLOPT_RETURNTRANSFER => 1, 
+			//CURLOPT_FORBID_REUSE => 1, 
+			//CURLOPT_TIMEOUT => 10, 
+			CURLOPT_POSTFIELDS => array('rcpt'=>$json)
+			
+			//CURLOPT_FOLLOWLOCATION=>TRUE,
+			//CURLOPT_POSTFIELDS=>http_build_query(array('ff'=>'fg')),
+			//curl_setopt($ch, CURLOPT_POSTFIELDS, $json),
 		);
 		
 		$ch = curl_init();
 		curl_setopt_array($ch, $options);
+		//$result = curl_exec ($ch);
+		//$code = curl_getinfo($ch, CURLINFO_HTTP_CODE);
 		if( ! $result = curl_exec($ch)) 
 		{ 
 		    trigger_error(curl_error($ch)); 
-		}
-		$code = curl_getinfo($ch, CURLINFO_HTTP_CODE);
+		} 
 		curl_close($ch); 
+		//return $result;
+		
+		die(print($result));
 		
 		if ($code>=400) {
 			if ($code==403) {
@@ -504,12 +520,10 @@ class PaymentsController extends AppController {
 			} else {
 				return 'c'.$code;
 			}
-		} else {
-			$new = json_decode($result);
-			return $new->uniquestring;
 		}
+		
+		//return $httpCode;
 	}
-	
 	
 	
 	

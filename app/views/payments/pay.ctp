@@ -43,6 +43,21 @@ if (isset($sp[1])) {
 }
 ?>
 
+<style type="text/css">
+#printable { display: none; }
+
+    @media print
+    {
+        #non-printable { display: none; }
+	#header { display: none; }
+	#mid { display: none; }
+        #printable { display: block; }
+	body {background-color:white}
+    }
+</style>
+
+<div id="non-printable">
+				
 <script type="text/javascript">
 var balance = <?php echo $ntotal; ?>;
 
@@ -214,8 +229,6 @@ function remo(num,str) {
 				});
                             });
 </script>
-
-<div id="non-printable">
 
 <div id="dialog-cash" title="Cash Payment">
 			<div>
@@ -543,13 +556,9 @@ function remo(num,str) {
 </div>
 
 </td></tr></table>
-
+</div>
 <!--Printer View -------------------->
-		<div style="min-width:320px;float:left;" id="printable">
-				<div id="pays" style="background-color:inherit;">
-								<h3>Payments</h3>
-							
-				</div>
+		<div style="width:100%;" id="printable">
 				<div style="background-color:white;">
 								<div style="text-align:center;display:none;">
 								<span style="color:black;">

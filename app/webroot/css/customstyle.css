@@ -82,13 +82,3 @@ div.checkbox {
     margin-left:0px;
     padding: 0px;
 }
-
-/*receipt print view*/
-#printable { display: none; }
-
-@media print
-    {
-        #non-printable { display: none; }
-        #printable { display: block; }
-    }
-
