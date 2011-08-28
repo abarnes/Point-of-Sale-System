@@ -75,7 +75,13 @@ www.barnespos.com
 </div>
 
 <div id="links">
-	<div class="toolbar"><a class="back" href="#home" rel="external">Back</a><h1>Actions</h1></div>
+        <script type="text/javascript">
+        function opened(){
+            var jQT = new $.jQTouch();
+            jQT.goTo('#home');
+        }
+        </script>
+	<div class="toolbar"><a class="back" href="#" onclick="opened()" rel="external">Back</a><h1>Actions</h1></div>
 	<br/>
 	<ul class="rounded">
 	    <li><?php echo $html->link('Edit',array('controller'=>'seats','action'=>'edit/'.$ticket['Ticket']['id']),array('rel'=>'external')); ?></li>
@@ -89,7 +95,6 @@ www.barnespos.com
 	?></li>
 	<?php
 	if (count($seats)>1) {
-	    //echo '<li>'.$html->link('Split Ticket',array('controller'=>'tickets','action'=>'split/'.$ticket['Ticket']['id']),array('rel'=>'external')).'</li>';
 	    echo '<li>'.$html->link(
 					'Split Seats into Individual Tickets', 
 					array('controller'=>'tickets','action'=>'split_indiv/'.$ticket['Ticket']['id']), 

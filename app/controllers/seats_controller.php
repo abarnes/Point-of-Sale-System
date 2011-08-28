@@ -97,7 +97,10 @@ class SeatsController extends AppController {
 				$co++;
 			}
 			if ($this->Seat->saveAll($this->data['Seat'])) {
-				//$this->_printtokitchen($id);
+                                 $s = $this->Setting->find('first',array('order'=>'Setting.created ASC'));
+                                if ($s['Setting']['kitchen_printer']!='') {
+                                    $this->_printtokitchen($id);
+                                }
 				$this->Session->setFlash('Ticket Submitted.');
 				$this->redirect(array('controller'=>'tickets','action' => 'index'));
 			} else {
@@ -213,10 +216,13 @@ class SeatsController extends AppController {
 				
 				$co++;
 			}
+                        
 			//print new stuff
-			$this->_printedit($diff,$id);
-			//die(print_r($diff));
-			
+                        $s = $this->Setting->find('first',array('order'=>'Setting.created ASC'));
+                        if ($s['Setting']['kitchen_printer']!='') {
+                            $this->_printedit($diff,$id);
+                        }
+						
 			$this->Session->setFlash('Ticket Updated.');
 			$this->redirect(array('controller'=>'tickets','action' => 'index'));
 		} else {

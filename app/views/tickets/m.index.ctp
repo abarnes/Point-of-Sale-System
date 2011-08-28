@@ -50,7 +50,13 @@ www.barnespos.com
 </div>
 
 <div id="options">
-    <div class="toolbar"><a class="back" href="#home" rel="external">Back</a><h1>Options</h1></div>
+    <script type="text/javascript">
+    function opened(){
+        var jQT = new $.jQTouch();
+	jQT.goTo('#home');
+    }
+    </script>
+    <div class="toolbar"><a class="other" href="#" rel="external" onclick="opened()">Back</a><h1>Options</h1></div>
     
     <h1 style="color:white;">Sort By</h1>
     <ul class="rounded">

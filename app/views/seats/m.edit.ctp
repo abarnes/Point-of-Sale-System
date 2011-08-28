@@ -173,7 +173,7 @@ www.barnespos.com
                                     <ul class="edit rounded">
 				    <li><span style="color:white;float:left;">Table</span><span style="float:right;"><?php echo $form->input('Ticket.table', array( 'label' => '','placeholder'=>'Table','value'=>$ticket['Ticket']['table'])); ?></span></li>
 				    <li><span style="color:white;float:left;">Type</span><span style="float:right;"><?php echo $form->input('Ticket.type_id', array( 'label' => '','placeholder'=>'Type','value'=>$ticket['Ticket']['type_id'])); ?></span></li>
-				    <li><span style="color:white;float:left;">Seats</span><span style="float:right;"><?php echo $form->input('Ticket.seats', array( 'label' => '','placeholder'=>'Number of Seats','value'=>$seats)); ?></span></li>
+				    <li><span style="color:white;float:left;">Seats</span><span style="float:right;"><?php echo $form->input('Ticket.seats', array( 'label' => '','placeholder'=>'Number of Seats','type'=>'tel','value'=>$seats)); ?></span></li>
                                     </ul><br/>
                                 <a class="grayButton" rel="external" onclick="document.forms['TicketEdit/<?php echo $id; ?>Form'].submit()">Submit</a>    
 				<?php //echo $form->end('Update'); ?>
@@ -426,6 +426,11 @@ function remo(sn,txt,t) {
 	jQT.goTo('#seatc'+ff);
     }
     
+    function opened(){
+        var jQT = new $.jQTouch();
+	jQT.goTo('#editform');
+    }
+    
     function opts(sn){
         var c = sn-1;
        document.getElementById('optsd').setAttribute('onclick','next('+c+')');
@@ -439,7 +444,7 @@ function remo(sn,txt,t) {
     <div class="toolbar"><a class="other" href="#" id="optsd" onclick="">Back</a><h1>Options</h1></div>
     <br/>
     <ul class="rounded">
-        <li><a href="#editform">Edit Ticket Info</a></li>
+        <li><a href="#" onclick="opened()">Edit Ticket Info</a></li>
         <li><?php
 		echo $html->link(
 					    'Cancel Edit', 

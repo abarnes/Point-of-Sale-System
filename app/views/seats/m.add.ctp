@@ -402,6 +402,11 @@ function remo(sn,txt,t) {
 	jQT.goTo('#seatc'+ff);
     }
     
+    function opened(){
+        var jQT = new $.jQTouch();
+	jQT.goTo('#editform');
+    }
+    
     function opts(sn){
         var c = sn-1;
        document.getElementById('optsd').setAttribute('onclick','next('+c+')');
@@ -415,7 +420,7 @@ function remo(sn,txt,t) {
     <div class="toolbar"><a class="other" href="#" id="optsd" onclick="">Back</a><h1>Options</h1></div>
     <br/>
     <ul class="rounded">
-        <li><a href="#editform">Edit Ticket Info</a></li>
+        <li><a href="#" onclick="opened()">Edit Ticket Info</a></li>
         <li><?php
 		echo $html->link(
 					    'Cancel Ticket', 

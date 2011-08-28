@@ -11,6 +11,7 @@ www.barnespos.com
 <br/>
 <div style="width:100%;">
 <h3>Welcome to the Barnes POS System Setup Utility</h3>
+<?php echo $html->image('logo2.png',array('alt'=>'Barnes Point of Sale System')); ?>
 
 <p>This utility will help you get your new system up and running quickly.  Follow the steps, but feel free to skip any you don't want to set up right now.  All of these settings are accessible from the admin panel later.</p>
 
