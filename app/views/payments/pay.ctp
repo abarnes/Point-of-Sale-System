@@ -559,7 +559,7 @@ function remo(num,str) {
 </td></tr></table>
 </div>
 <!--Printer View -------------------->
-		<div style="width:100%;" id="printable">
+		<div style="width:100%;position:relative;right:30px;" id="printable">
 				<div style="background-color:white;">
 								<div style="text-align:center;display:none;">
 								<span style="color:black;">
