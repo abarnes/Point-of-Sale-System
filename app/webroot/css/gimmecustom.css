@@ -41,7 +41,7 @@ label {
 }
 
 p, #flashMessage {
-    font-style:italic;
+    /*font-style:italic;*/
     margin-left:40px;
 }
 

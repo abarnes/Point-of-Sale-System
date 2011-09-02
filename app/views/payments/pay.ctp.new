@@ -398,8 +398,8 @@ function remo(num,str) {
 				<!--------submit form----->
 				<script type="text/javascript">
 				function submitfr() {
-				//window.print();			
-				  document.getElementById('PaymentPay<?php echo '/'.$ticket['Ticket']['id']; ?>Form').submit();
+					window.print();			
+				  //document.getElementById('PaymentPay<?php echo '/'.$ticket['Ticket']['id']; ?>Form').submit();
 				}
 				</script>
 			<br/>
@@ -558,11 +558,11 @@ function remo(num,str) {
 
 </td></tr></table>
 </div>
-<?php /*-----------------------print view */?>
-		<div style="width:100%;" id="printable">
+<?php /*-------Printer View --------------------*/ ?>
+		<div style="width:303px;" id="printable">
 				<div style="background-color:white;">
 								<div style="text-align:center;">
-								<span style="color:black;">
+								<span style="color:black;margin-left:0px;">
 									<br/>
 									<b><?php echo $s['business_name']; ?></b><br/>
 												<?php
@@ -594,7 +594,7 @@ function remo(num,str) {
 								</span>
 								</div>
 								
-								<div style="margin:0px;">
+								<div style="margin:9px;">
 								<span style="color:black;">
 												
 												<p style="font-size:85%;width:100%;margin-left:0px;">
@@ -614,7 +614,7 @@ function remo(num,str) {
 								<?php if ($ticket['Type']['use_seats']=='1') { ?>
 								
 												<?php foreach ($seats as $ss) { ?>
-												<table style="font-size:85%;margin:0px;">
+												<table style="font-size:85%;">
 												    <tr>
 													<th>Seat <?php echo $ss['seat']; ?>
 													    <?php if ($ss['orig_seat']!='0' && $ss['orig_seat']!=$ss['seat']) {
@@ -678,7 +678,7 @@ function remo(num,str) {
 								<br/>
 												
 										<p style="font-size:85%;width:100%;">
-												    <span style="float:left;margin-left:50px;">Subtotal: <br/>
+												    <span style="float:left;margin-left:100px;">Subtotal: <br/>
 												    Tax (<?php echo trim(rtrim($s['tax'],'0'),'0'); ?>%):<br/>
 												    Total:<br/>
 												    </span>

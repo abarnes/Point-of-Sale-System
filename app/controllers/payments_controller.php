@@ -14,7 +14,7 @@ class PaymentsController extends AppController {
 	var $name = 'Payments';
         //var $layout = 'default';
 	var $uses = array('Payment','Ticket','Setting','Seat','Item','Modifier','Type','Discount');
-	var $helpers = array('Html', 'Form', 'Time', 'javascript');
+	var $helpers = array('Html', 'Form', 'Time', 'javascript','Qrcode');
 	var $components = array('Auth','Session');
         
         function beforeFilter() {
@@ -367,11 +367,11 @@ class PaymentsController extends AppController {
 				$this->Ticket->saveField('status', '2');
 				
 				//normal redirect	
-				/*$this->Session->setFlash('Ticket '.$ticket['Ticket']['dailyid'].' Paid');
-				$this->redirect(array('controller'=>'tickets','action' => 'index'));*/
+				$this->Session->setFlash('Ticket '.$ticket['Ticket']['dailyid'].' Paid');
+				$this->redirect(array('controller'=>'tickets','action' => 'menu'));
 				
 				//gimme sample
-				$this->redirect(array('controller'=>'payments','action' => 'gimmesample/'.$id));
+				//$this->redirect(array('controller'=>'payments','action' => 'gimmesample/'.$id));
 			} else {
 				$dif = $taxed-$am;
 				$this->Session->setFlash('The full amount was not been entered. (Short by $'.$dif.')');

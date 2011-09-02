@@ -16,7 +16,7 @@ class QrcodeHelper extends AppHelper {
 	 * 
 	 * @var string
 	 */
-	var $size = '350x350';
+	var $size = '150x150';
 	
 	/** 
 	 * Encoding:

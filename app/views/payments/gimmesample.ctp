@@ -46,7 +46,7 @@ if (isset($sp[1])) {
 
 				<div style="background-color:white;">
 								<div style="text-align:center;">
-								<span style="color:black;">
+								<span style="color:black;font-size:90%;">
 									<br/>
 									<b><?php echo $s['business_name']; ?></b><br/>
 												<?php
@@ -82,14 +82,14 @@ if (isset($sp[1])) {
 								<span style="color:black;">
 												
 												<p style="font-size:85%;width:100%;margin-left:0px;">
-												    <span style="float:left;">ID: <?php echo $ticket['Ticket']['dailyid']; ?><br/>
+												    <span style="float:left;width:50%;">ID: <?php echo $ticket['Ticket']['dailyid']; ?><br/>
 												    <?php echo $ticket['Type']['name']; ?><br/>
 												    <?php if ($ticket['Type']['use_tables']=='1') { ?> 
 												    Table: <?php echo $ticket['Ticket']['table']; ?><br/>
 												    <?php } ?>
 												    Server: <?php echo $ticket['User']['username']; ?>
 												    </span>
-												    <span style="float:right;text-align:right;">
+												    <span style="float:right;text-align:right;width:50%;">
 																<?php echo date("m-d-Y",strtotime($ticket['Ticket']['created'])); ?><br/>
 																<?php echo date("g:i a",strtotime($ticket['Ticket']['created'])); ?>
 												    </span>
@@ -101,7 +101,7 @@ if (isset($sp[1])) {
 												
 												<table style="font-size:85%;;">
 												    <tr>
-													<th">Seat <?php echo $ss['seat']; ?>
+													<th>Seat <?php echo $ss['seat']; ?>
 													    <?php if ($ss['orig_seat']!='0' && $ss['orig_seat']!=$ss['seat']) {
 														echo '(Originally Seat '.$ss['orig_seat'].')';
 													    } ?>
@@ -162,8 +162,8 @@ if (isset($sp[1])) {
 												
 								<?php } ?>
 								
-												
-										<p style="font-size:85%;width:100%;margin-left:0px;">
+											<br/>	
+										<p style="font-size:85%;width:100%;margin:0px;">
 												    <span style="float:left;margin-left:100px;">Subtotal: <br/>
 												    Tax (<?php echo trim(rtrim($s['tax'],'0'),'0'); ?>%):<br/>
 												    Total:<br/>
@@ -181,11 +181,10 @@ if (isset($sp[1])) {
 												<p style="font-size:85%;margin-left:0px;"><span style="float:left;margin-left:100px;"><?php echo ucfirst($p['type']); ?></span><span style="float:right;text-align:right;">$<?php echo $p['amount']; ?></span><br/></p>
 											<?php } ?>
 										</div>
-										<br/>
 										
-										<div id="gimme">
-												<?php echo $this->Qrcode->url($url); ?>
-										</div>
+										<p style="text-align:center;margin:0px;">Gimme! QR Code</p>
+										
+												<div style="text-align:center;width:100%;"><?php echo $this->Qrcode->url('http://www.barnespos.com'); ?></div>
 								
 								</span>				
 								</div>
