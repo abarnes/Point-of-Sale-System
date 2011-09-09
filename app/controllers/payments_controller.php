@@ -545,8 +545,6 @@ class PaymentsController extends AppController {
 		} else {
 			return $result;
 		}
-		
-		//return $httpCode;
 	}
 	
 	function gimmesample($id){
