@@ -437,7 +437,7 @@ class PaymentsController extends AppController {
 		}*/
 		
 		$signature = null;
-		$toSign = "http://173.246.103.0:9000/pos/api/location/".$loc."/receiptjson?sequence=2200012&signature=";
+		$toSign = $settings['Setting']['gimme_url']."/pos/api/location/".$loc."/receiptjson?sequence=2200012&signature=";
 		// Read the private key from the file.
 		//$fp = fopen('/Users/Schwamm/Sites/barnespossystem/app/webroot/files/key.pem',"r");
 		$fp = fopen($settings['Setting']['gimme_cert_location'], "r");
