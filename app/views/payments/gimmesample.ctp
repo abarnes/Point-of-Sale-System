@@ -182,9 +182,13 @@ if (isset($sp[1])) {
 											<?php } ?>
 										</div>
 										
-										<p style="text-align:center;margin:0px;">Gimme! QR Code</p>
-										
-												<div style="text-align:center;width:100%;"><?php echo $this->Qrcode->url('http://www.barnespos.com'); ?></div>
+										<div id="gimme" style="text-align:center;">
+											<div style="border:0px solid black;text-align:center;width:100%;">
+												<div><?php echo $s['gimme_text']; ?></div>
+												<?php echo $this->Qrcode->url($url); ?>
+											</div>
+											<br/>
+										</div>
 								
 								</span>				
 								</div>

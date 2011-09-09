@@ -356,15 +356,15 @@ class PaymentsController extends AppController {
 						$data['Payment']['amount'] = $this->data['Payment']['amount'.$co];
 						$data['Payment']['type'] = $this->data['Payment']['type'.$co];
 						$data['Payment']['tip'] = $this->data['Payment']['tip'.$co];
-						$this->Payment->save($data);
-						$this->Payment->id = false;
+						//$this->Payment->save($data);
+						//$this->Payment->id = false;
 					}
 					$co++;
 				}
 				
 				//update ticket status
-				$this->Ticket->id = $id;
-				$this->Ticket->saveField('status', '2');
+				//$this->Ticket->id = $id;
+				//$this->Ticket->saveField('status', '2');
 				
 				if ($find['Setting']['use_gimme']=='1') {
 					$resp = $this->_gimme($id);
@@ -394,34 +394,47 @@ class PaymentsController extends AppController {
 				$this->Session->setFlash('The full amount was not been entered. (Short by $'.$dif.')');
 				$this->redirect(array('controller'=>'payments','action' => 'pay/'.$id));
 			}
-		}
-	}
-	
-	function _gimme_handle($id) {
-		$resp = $this->_gimme($id);
-		//codes for errors:
-		// b - 403 error, authentication with gimme failed     c - other error (apache response over 399)
-		if ($resp == 'b') {
-			return 'Request Denied.  Your subscription may have expired.';
-		} elseif (substr($resp,0,1) == 'c') {
-			return 'Gimme\'s server returned an error ('.substr($resp,'1').'); check your Gimme settings.';
 		} else {
-			return $resp;
+			//temporary for gimme
+			$resp = $this->_gimme($id);
+			$this->set('url',$resp);
 		}
 	}
 	
-	function _gimme($id) {
+	function gimme_test($id,$total=null) {
+		$resp = $this->_gimme($id,$total);
+	
+		//codes for errors:
+		// b - 404 error, authentication with gimme failed     c - other error (apache response over 399)
+		/*if ($resp == 'b') {
+			echo 'Request Denied.  Your subscription may have expired.';
+		} elseif (substr($resp,0,1) == 'c') {
+			echo 'Gimme\'s server returned an error ('.substr($resp,'1').'); check your Gimme settings.';
+		} else {*/
+			//decode json
+			//$rr = json_decode($resp);
+			
+			//die(print($rr->uniquestring));
+			$this->set('url',$resp);
+			
+			//echo $resp;
+		//}
+	}
+	
+	function _gimme($id,$total=null) {
 		//generate signature-----------------------------------------------------------------------------------
 		$settings = $this->Setting->find('first',array('order'=>'Setting.created ASC'));
-		//$loc = $settings['Setting']['locationid'];
-		$loc = '2';
+		$loc = $settings['Setting']['locationid'];
+		//$loc = '2';
 		
 		//pull ticket data
 		$this->Ticket->recursive = 2;
 		$ticket = $this->Ticket->findById($id);
-		if (empty($ticket['Payment'])) {
+		
+		//uncomment after demo
+		/*if (empty($ticket['Payment'])) {
 			return false;
-		}
+		}*/
 		
 		$signature = null;
 		$toSign = "http://173.246.103.0:9000/pos/api/location/".$loc."/receiptjson?sequence=2200012&signature=";
@@ -454,10 +467,12 @@ class PaymentsController extends AppController {
 		}
 		
 		$open = date("Y-m-d'6'h:i:s",strtotime($ticket['Ticket']['created']));
-		$open = str_replace("'6'","'T'",$open);
-		$close = date("Y-m-d'6'h:i:s",strtotime($ticket['Payment'][0]['created']));
-		$close = str_replace("'6'","'T'",$close);
-		$data = array('receipt'=>array('locationid'=>$loc,'openingtime'=>$open,'closingtime'=>$close,'totalamt'=>$ticket['Payment'][0]['amount'],'paymentmethod'=>$ticket['Payment'][0]['type']));
+		$open = str_replace("'6'","T",$open);
+		//$close = date("Y-m-d'6'h:i:s",strtotime($ticket['Payment'][0]['created']));
+		$close = date("Y-m-d'6'h:i:s",time());
+		$close = str_replace("'6'","T",$close);
+		//$data = array('locationid'=>$loc,'openingtime'=>$open,'closingtime'=>$close,'totalamt'=>$ticket['Payment'][0]['amount'],'paymentmethod'=>$ticket['Payment'][0]['type']);
+		$data = array('locationid'=>$loc,'openingtime'=>$open,'closingtime'=>$close,'totalamt'=>$total,'paymentmethod'=>'cash');
 		$its = array();
 		foreach ($ticket['Seat'] as $sts) {
 			$newt = rtrim($sts['items'],',');
@@ -507,49 +522,48 @@ class PaymentsController extends AppController {
 		//die(print($json));
 		
 		$options = array(
-			//CURLOPT_HEADER => 0,
+			CURLOPT_HEADER => 0,
+			CURLOPT_RETURNTRANSFER => true,
 			//CURLOPT_HTTPHEADER=>array('Content-Type: application/json;'),
 			CURLOPT_URL=>$toSign,
 			//CURLOPT_URL=>'http://austinbarnes.net/test.php',
 			CURLOPT_POST=>1,
-			//CURLOPT_FRESH_CONNECT => 1, 
-			//CURLOPT_RETURNTRANSFER => 1, 
-			//CURLOPT_FORBID_REUSE => 1, 
-			//CURLOPT_TIMEOUT => 10, 
+
 			CURLOPT_POSTFIELDS => array('rcpt'=>$json)
-			
-			//CURLOPT_FOLLOWLOCATION=>TRUE,
-			//CURLOPT_POSTFIELDS=>http_build_query(array('ff'=>'fg')),
-			//curl_setopt($ch, CURLOPT_POSTFIELDS, $json),
 		);
 		
 		$ch = curl_init();
 		curl_setopt_array($ch, $options);
 		//$result = curl_exec ($ch);
-		$code = curl_getinfo($ch, CURLINFO_HTTP_CODE);
 		if( ! $result = curl_exec($ch)) 
 		{ 
 		    trigger_error(curl_error($ch)); 
-		} 
+		}
+		$code = curl_getinfo($ch, CURLINFO_HTTP_CODE);
 		curl_close($ch); 
 		//return $result;
 		
-		//die(print($result));
+		//die(print($code));
 		
-		if ($code>=400) {
-			if ($code==403) {
+		/*if ($code>=400) {
+			if ($code==404) {
 				return 'b';
 			} else {
 				return 'c'.$code;
 			}
-		} else {
+		} else {*/
+		//die(print_r($result));
 			return $result;
-		}
+		//}
 	}
 	
 	function gimmesample($id){
 		$this->layout = 'gimme';
 		$userInfo = $this->Auth->user();
+		
+		//temporary for gimme
+		$resp = $this->_gimme($id);
+		$this->set('url',$resp);
 		
 		//set the settings
 		$find = $this->Setting->find('first',array('order'=>'Setting.created ASC'));

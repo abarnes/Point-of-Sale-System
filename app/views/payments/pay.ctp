@@ -694,9 +694,11 @@ function remo(num,str) {
 										<br/>
 										
 										<div id="gimme" style="text-align:center;">
-											<div style="height:130px;border:1px solid black;text-align:center;">
-												<p>(Gimme Stuff)</p>
+											<div style="border:0px solid black;text-align:center;">
+												<p><?php echo $s['gimme_text']; ?></p>
+												<?php echo $this->Qrcode->url($url); ?>
 											</div>
+											<br/>
 										</div>
 								
 								</span>				
