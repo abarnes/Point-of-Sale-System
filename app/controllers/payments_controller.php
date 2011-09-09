@@ -537,7 +537,7 @@ class PaymentsController extends AppController {
 		//$result = curl_exec ($ch);
 		if( ! $result = curl_exec($ch)) 
 		{ 
-		    trigger_error(curl_error($ch)); 
+		    //trigger_error(curl_error($ch)); 
 		}
 		$code = curl_getinfo($ch, CURLINFO_HTTP_CODE);
 		curl_close($ch); 
