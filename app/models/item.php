@@ -33,7 +33,7 @@ class Item extends AppModel {
     );
     var $validate = array(
         'name' => array(
-            'rule' => '/^[a-z0-9]$/i',
+            'rule' => '/^[a-z0-9A-Z\s]{1,}$/i',
             'message' => 'Only letters and numbers allowed.'
         )
     );

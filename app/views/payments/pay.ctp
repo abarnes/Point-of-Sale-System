@@ -398,8 +398,8 @@ function remo(num,str) {
 				<!--------submit form----->
 				<script type="text/javascript">
 				function submitfr() {
-				//window.print();			
-				  document.getElementById('PaymentPay<?php echo '/'.$ticket['Ticket']['id']; ?>Form').submit();
+				window.print();			
+				  //document.getElementById('PaymentPay<?php echo '/'.$ticket['Ticket']['id']; ?>Form').submit();
 				}
 				</script>
 			<br/>
@@ -559,9 +559,8 @@ function remo(num,str) {
 </td></tr></table>
 </div>
 <?php /*-----------------------print view */?>
-		<div style="width:100%;" id="printable">
-				<div style="background-color:white;">
-								<div style="text-align:center;">
+		<div style="width:253px;margin:0px;" id="printable">
+						<div style="text-align:center;">
 								<span style="color:black;">
 									<br/>
 									<b><?php echo $s['business_name']; ?></b><br/>
@@ -588,13 +587,13 @@ function remo(num,str) {
 												<?php
 												if ($s['website']!='') {
 													echo $s['website'].'<br/>';			
-												} ?>
+												} ?><br/>
 												
 												
 								</span>
-								</div>
+						</div>
 								
-								<div style="margin:0px;">
+						<div style="margin:0px;">
 								<span style="color:black;">
 												
 												<p style="font-size:85%;width:100%;margin-left:0px;">
@@ -649,7 +648,7 @@ function remo(num,str) {
 				
 								<?php } else { ?>
 												<?php foreach ($seats as $ss) { ?>
-												<table style="font-size:85%;">
+												<table style="font-size:85%;margin:0px;">
 												    <tr>
 													<th>Order</th>
 												    </tr>
@@ -695,6 +694,5 @@ function remo(num,str) {
 										<br/>
 								
 								</span>				
-								</div>
-				</div>
+						</div>
 		</div>

@@ -23,6 +23,8 @@ www.barnespos.com
                                 <h3>Gimme!</h3>
 				<?php echo $form->input('use_gimme', array( 'label' => 'Enable Gimme!')); ?>
 				<?php echo $form->input('locationid', array( 'label' => 'Location ID for Gimme!')); ?>
+				<?php echo $form->input('gimme_cert_location', array( 'label' => 'Gimme! Path to Certificate File')); ?>
+				<?php echo $form->input('receiptdemo', array( 'label' => 'Demo receipt page')); ?>
 				<?php echo $form->end('Save'); ?>
 	</div>
 	

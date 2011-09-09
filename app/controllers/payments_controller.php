@@ -366,12 +366,29 @@ class PaymentsController extends AppController {
 				$this->Ticket->id = $id;
 				$this->Ticket->saveField('status', '2');
 				
-				//normal redirect	
-				$this->Session->setFlash('Ticket '.$ticket['Ticket']['dailyid'].' Paid');
-				$this->redirect(array('controller'=>'tickets','action' => 'menu'));
+				if ($find['Setting']['use_gimme']=='1') {
+					$resp = $this->_gimme($id);
+					//codes for errors:
+					// b - 403 error, authentication with gimme failed     c - other error (apache response over 399)
+					if ($resp == 'b') {
+						$this->Session->setFlash('Request Denied.  Your subscription may have expired.');
+						$this->redirect(array('controller'=>'tickets','action' => 'menu'));
+					} elseif (substr($resp,0,1) == 'c') {
+						$this->Session->setFlash('Gimme\'s server returned an error ('.substr($resp,'1').'); check your Gimme settings.');
+						$this->redirect(array('controller'=>'tickets','action' => 'menu'));
+					} else {
+						$code = $resp;
+					}
+				}
 				
-				//gimme sample
-				//$this->redirect(array('controller'=>'payments','action' => 'gimmesample/'.$id));
+				if ($find['Setting']['receiptdemo']!='1') {
+					//normal redirect
+					$this->Session->setFlash('Ticket '.$ticket['Ticket']['dailyid'].' Paid');
+					$this->redirect(array('controller'=>'tickets','action' => 'menu'));
+				} else {
+					//gimme sample
+					$this->redirect(array('controller'=>'payments','action' => 'gimmesample/'.$id));
+				}
 			} else {
 				$dif = $taxed-$am;
 				$this->Session->setFlash('The full amount was not been entered. (Short by $'.$dif.')');
@@ -380,16 +397,16 @@ class PaymentsController extends AppController {
 		}
 	}
 	
-	function gimme_test($id) {
+	function _gimme_handle($id) {
 		$resp = $this->_gimme($id);
 		//codes for errors:
 		// b - 403 error, authentication with gimme failed     c - other error (apache response over 399)
 		if ($resp == 'b') {
-			echo 'Request Denied.  Your subscription may have expired, or Gimme\'s servers may be down.';
+			return 'Request Denied.  Your subscription may have expired.';
 		} elseif (substr($resp,0,1) == 'c') {
-			echo 'Gimme\'s server returned an error ('.substr($resp,'1').'); check your Gimme settings.';
+			return 'Gimme\'s server returned an error ('.substr($resp,'1').'); check your Gimme settings.';
 		} else {
-			echo $resp;
+			return $resp;
 		}
 	}
 	
@@ -409,7 +426,7 @@ class PaymentsController extends AppController {
 		$signature = null;
 		$toSign = "http://173.246.103.0:9000/pos/api/location/".$loc."/receiptjson?sequence=2200012&signature=";
 		// Read the private key from the file.
-		$fp = fopen("/Users/Schwamm/Sites/barnespossystem/app/webroot/files/key.pem", "r");
+		$fp = fopen($settings['Setting']['gimme_cert_location'], "r");
 		$priv_key = fread($fp, 8192);
 		fclose($fp);
 		$pkeyid = openssl_get_privatekey($priv_key);
