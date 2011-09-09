@@ -398,8 +398,8 @@ function remo(num,str) {
 				<!--------submit form----->
 				<script type="text/javascript">
 				function submitfr() {
-				window.print();			
-				  //document.getElementById('PaymentPay<?php echo '/'.$ticket['Ticket']['id']; ?>Form').submit();
+				  window.print();			
+				  document.getElementById('PaymentPay<?php echo '/'.$ticket['Ticket']['id']; ?>Form').submit();
 				}
 				</script>
 			<br/>
@@ -692,6 +692,12 @@ function remo(num,str) {
 								                <div id="receipt">
 										</div>
 										<br/>
+										
+										<div id="gimme" style="text-align:center;">
+											<div style="height:130px;border:1px solid black;text-align:center;">
+												<p>(Gimme Stuff)</p>
+											</div>
+										</div>
 								
 								</span>				
 						</div>
