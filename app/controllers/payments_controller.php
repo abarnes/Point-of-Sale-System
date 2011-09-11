@@ -396,7 +396,7 @@ class PaymentsController extends AppController {
 			}
 		} else {
 			//temporary for gimme
-			$resp = $this->_gimme($id);
+			$resp = $this->_gimme($id,$total);
 			$this->set('url',$resp);
 		}
 	}
