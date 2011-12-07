@@ -367,7 +367,7 @@ class PaymentsController extends AppController {
 				//$this->Ticket->saveField('status', '2');
 				
 				if ($find['Setting']['use_gimme']=='1') {
-					$resp = $this->_gimme($id);
+					$resp = $this->_gimme($id,$total);
 					//codes for errors:
 					// b - 403 error, authentication with gimme failed     c - other error (apache response over 399)
 					if ($resp == 'b') {
@@ -396,7 +396,7 @@ class PaymentsController extends AppController {
 			}
 		} else {
 			//temporary for gimme
-			$resp = $this->_gimme($id);
+			$resp = $this->_gimme($id,$total);
 			$this->set('url',$resp);
 		}
 	}
@@ -422,6 +422,10 @@ class PaymentsController extends AppController {
 	}
 	
 	function _gimme($id,$total=null) {
+		if ($total==null) {
+			$total = '22.48';
+		}
+		
 		//generate signature-----------------------------------------------------------------------------------
 		$settings = $this->Setting->find('first',array('order'=>'Setting.created ASC'));
 		$loc = $settings['Setting']['locationid'];
