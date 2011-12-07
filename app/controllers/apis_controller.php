@@ -49,6 +49,66 @@ class ApisController extends AppController {
 		$this->set('apis',$this->Api->find('all',array('order'=>'Api.created DESC')));
 	}
 	
+	//login a user to a device without clocking in
+	function login(){
+		/*--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+		Send the following values through post:
+		Key		|	Example Value
+		'username'	|	'phillip'  	(send a string containing the username)
+		'password'	|	'ilikecows1'	(send a string for the password)
+		-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------*/
+		$data = $_POST;
+		if ($this->Auth->login(array('username'=>$data['username'],'password'=>$data['password']))) {
+			//good
+			echo $data['username'].' logged in.';
+		} else {
+			//fail
+			echo 'Failed to login';
+		}
+	}
+	
+	//clock in and login
+	function clockin() {
+		/*--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+		Send the following values through post:
+		Key		|	Example Value
+		'username'	|	'phillip'  	(send a string containing the username)
+		'password'	|	'ilikecows1'	(send a string for the password)
+		-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------*/
+		$data = $_POST;
+		if ($this->Auth->login(array('username'=>$data['username'],'password'=>$data['password']))) {
+			$userInfo = $this->Auth->user();
+			$id = $userInfo['User']['id'];
+			
+			$f = $this->Clock->find('first',array('conditions'=>array('Clock.user_id'=>$id,'Clock.complete'=>'0')));
+			//make sure it's not set
+			if (!empty($f)) {
+				echo 'Already clocked in.  Logged into device.';
+			} else {
+				$dat = array();
+				$dat['Clock']['user_id']=$id;
+				$dat['Clock']['complete']='0';
+				$dat['Clock']['in']=date('Y-m-d H:i:s',time());
+				$dat['Clock']['rate']=$userInfo['User']['rate1'];
+				if ($this->Clock->save($dat)) {
+					echo 'Clock in.';
+				} else {
+					//failed to save clock in
+					echo 'Error: failed to clock in.';
+				}
+			}
+		} else {
+			//failed to login
+			echo 'Login failure';
+		}
+		exit;
+	}
+	
+	//logout from a device without clocking out
+	function logout(){
+		
+	}
+	
 	//Submit a new ticket
 	function submit_ticket() {
 		/*------------------------------------------------------------------------------------------------------------------------------------------------
@@ -114,6 +174,16 @@ class ApisController extends AppController {
 			echo 'Missing Required Info: Missing either table number or first seat';
 			exit;
 		}
+	}
+	
+	//allows you to edit the info about a submitted ticket, such as type, table #, or # of seats
+	function ticket_edit() {
+		
+	}
+	
+	//allows you to edit the order of an already submitted table
+	function seat_edit(){
+		
 	}
 	
 	//function to combine tickets
