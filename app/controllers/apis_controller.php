@@ -13,7 +13,7 @@ class ApisController extends AppController {
  
 	var $name = 'Apis';
 	var $helpers = array('Html', 'Form', 'Time', 'javascript');
-	var $uses = array('Api','Ticket','Item','Seat');
+	var $uses = array('Api','Ticket','Item','Seat','Clock','User','Payment');
 	var $components = array('Auth','Session');
 	
 	/*------------------------------------------------------------------------------------------------------------------------------------------------
@@ -27,6 +27,7 @@ class ApisController extends AppController {
             $this->Auth->allow('*');
         }
 	
+/*----------------------------------------------------Test functions (see if POST is working-----------------------------------------------------*/		
 	//This is used for testing the POST method.  Pass a key named 'data' and then go to /apis/recorded to view results
 	function test_str() {
 		$this->layout = 'blank';
@@ -48,15 +49,16 @@ class ApisController extends AppController {
 	function recorded() {
 		$this->set('apis',$this->Api->find('all',array('order'=>'Api.created DESC')));
 	}
+/*----------------------------------------------------end test functions--------------------------------------------------------------------*/	
 	
-	//login a user to a device without clocking in
-	function login(){
+	//login a user to a device without clocking in----unnecessary, use clockin function
+	//function login(){
 		/*--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 		Send the following values through post:
 		Key		|	Example Value
 		'username'	|	'phillip'  	(send a string containing the username)
 		'password'	|	'ilikecows1'	(send a string for the password)
-		-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------*/
+		-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 		$data = $_POST;
 		if ($this->Auth->login(array('username'=>$data['username'],'password'=>$data['password']))) {
 			//good
@@ -65,7 +67,7 @@ class ApisController extends AppController {
 			//fail
 			echo 'Failed to login';
 		}
-	}
+	}*/
 	
 	//clock in and login
 	function clockin() {
@@ -76,7 +78,8 @@ class ApisController extends AppController {
 		'password'	|	'ilikecows1'	(send a string for the password)
 		-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------*/
 		$data = $_POST;
-		if ($this->Auth->login(array('username'=>$data['username'],'password'=>$data['password']))) {
+		$p = $this->Auth->password($data['password']);
+		if ($this->Auth->login(array('username'=>$data['username'],'password'=>$p))) {
 			$userInfo = $this->Auth->user();
 			$id = $userInfo['User']['id'];
 			
@@ -91,7 +94,7 @@ class ApisController extends AppController {
 				$dat['Clock']['in']=date('Y-m-d H:i:s',time());
 				$dat['Clock']['rate']=$userInfo['User']['rate1'];
 				if ($this->Clock->save($dat)) {
-					echo 'Clock in.';
+					echo 'Clocked in.';
 				} else {
 					//failed to save clock in
 					echo 'Error: failed to clock in.';
@@ -104,10 +107,73 @@ class ApisController extends AppController {
 		exit;
 	}
 	
-	//logout from a device without clocking out
-	function logout(){
+	//clock out and log out
+	function clockout(){
+		/*--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+		Send the following values through post:
+		Key		|	Example Value
+		'username'	|	'phillip'  	(send a string containing the username)
+		'tips'		|	'28.44'		(cash tips, without dollar sign)
+		-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------*/
+		$data = $_POST;
+		print_r($data);
+		$userInfo = $this->User->find('first',array('conditions'=>array('username'=>$data['username'])));
+		$id = $userInfo['User']['id'];
+		$t = $data['tips'];
 		
+		$f = $this->Clock->find('first',array('conditions'=>array('Clock.user_id'=>$id,'Clock.complete'=>'0')));
+		//make sure it's not set
+		if (!empty($f)) {
+			$out = time();
+			$in = strtotime($f['Clock']['in']);
+			$sec = $out-$in;
+			$time = $sec/3600;
+			$cost = $time*$f['Clock']['rate'];
+			if ($cost<0) {
+				$cost = 0;
+			}
+			
+			$data = array();
+			$this->Clock->id = $f['Clock']['id'];
+			$data['Clock']['complete']='1';
+			$data['Clock']['cost']=$cost;
+			$data['Clock']['out']=date('Y-m-d H:i:s',time());
+			
+			//calculate credit card tips
+				$tick = $this->Ticket->find('list',array('fields'=>array('Ticket.id'),'conditions'=>array('Ticket.created >='=>date('Y-m-d H:i:s',strtotime($f['Clock']['in'])),'Ticket.user_id'=>$f['Clock']['user_id'])));
+				$p = $this->Payment->find('all',array('conditions'=>array('Payment.ticket_id'=>$tick)));
+				$ctips = 0;
+				foreach ($p as $a) {
+					$ctips = $ctips+$a['Payment']['tip']; 
+				}
+				//format the total
+				$sp = explode('.',$ctips);
+				if (isset($sp[1])) {
+					if (strlen($sp[1])==1) {
+						$ctips = $ctips.'0';
+					}
+				} else {
+					$ctips = $ctips.'.00';
+				}
+					
+				$data['Clock']['tips'] = $t+$ctips;
+			
+			if ($this->Clock->save($data)) {
+				echo $userInfo['User']['username'].' clocked out.';
+				$this->Auth->logout();
+			} else {
+				//failed to save clock out
+				echo 'Error: failed to clock out';
+			}
+		} else {
+			echo 'Error: unable to find shift';
+		}
 	}
+	
+	//logout from a device without clocking out
+	/*function logout(){
+		
+	}*/
 	
 	//Submit a new ticket
 	function submit_ticket() {
@@ -178,12 +244,12 @@ class ApisController extends AppController {
 	
 	//allows you to edit the info about a submitted ticket, such as type, table #, or # of seats
 	function ticket_edit() {
-		
+		//to be written later
 	}
 	
 	//allows you to edit the order of an already submitted table
 	function seat_edit(){
-		
+		//to be written later
 	}
 	
 	//function to combine tickets
@@ -375,6 +441,51 @@ class ApisController extends AppController {
 			die(print('Error: Ticket failed to save.'));
 			exit;
 		}
+	}
+	
+	
+/*--------------------------------These are extra functions, not directly used in the API---------------------------------------------*/	
+	
+	function _timeBetween($start_date,$end_date)  {  
+	    $diff = $end_date-$start_date;  
+	    $seconds = 0;  
+	    $hours   = 0;  
+	    $minutes = 0;  
+      
+	    if($diff % 86400 <= 0){$days = $diff / 86400;}  // 86,400 seconds in a day  
+	    if($diff % 86400 > 0)  
+	    {  
+		$rest = ($diff % 86400);  
+		$days = ($diff - $rest) / 86400;  
+		if($rest % 3600 > 0)  
+		{  
+		    $rest1 = ($rest % 3600);  
+		    $hours = ($rest - $rest1) / 3600;  
+		    if($rest1 % 60 > 0)  
+		    {  
+			$rest2 = ($rest1 % 60);  
+		    $minutes = ($rest1 - $rest2) / 60;  
+		    $seconds = $rest2;  
+		    }  
+		    else{$minutes = $rest1 / 60;}  
+		}  
+		else{$hours = $rest / 3600;}  
+	    }  
+      
+	    if($days > 0) {
+		$days = $days.' days, ';
+	    } else {$days = false;}  
+	    if($hours > 0) {
+		$hours = $hours.':';
+	    } else {
+		$hours = '0:';
+	    }  
+	    if($minutes > 10){$minutes = $minutes.'';}  
+	    elseif ($minutes<10 && $minutes!=0) {$minutes = '0'.$minutes;}
+	    else{$minutes = '00';}
+	    $seconds = $seconds.' seconds'; // always be at least one second  
+      
+	    return $days.''.$hours.''.$minutes/*.''.$seconds*/;  
 	}
         
 }
