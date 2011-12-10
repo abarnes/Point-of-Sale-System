@@ -15,6 +15,8 @@
       
       <div id="main" class="shadow">
         <?php echo $content_for_layout; ?>
-      </div>  
+      </div>
+      
+      <a href="/tickets/menu" style="position:fixed;top:10px;right:10px;text-decoration:none;font-size:1.6em;">Menu</a>
   </body>
 </html>

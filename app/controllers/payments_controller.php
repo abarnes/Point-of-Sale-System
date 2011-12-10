@@ -356,18 +356,18 @@ class PaymentsController extends AppController {
 						$data['Payment']['amount'] = $this->data['Payment']['amount'.$co];
 						$data['Payment']['type'] = $this->data['Payment']['type'.$co];
 						$data['Payment']['tip'] = $this->data['Payment']['tip'.$co];
-						//$this->Payment->save($data);
-						//$this->Payment->id = false;
+						$this->Payment->save($data);
+						$this->Payment->id = false;
 					}
 					$co++;
 				}
 				
 				//update ticket status
-				//$this->Ticket->id = $id;
-				//$this->Ticket->saveField('status', '2');
+				$this->Ticket->id = $id;
+				$this->Ticket->saveField('status', '2');
 				
 				if ($find['Setting']['use_gimme']=='1') {
-					$resp = $this->_gimme($id,$total);
+					/*$resp = $this->_gimme($id);
 					//codes for errors:
 					// b - 403 error, authentication with gimme failed     c - other error (apache response over 399)
 					if ($resp == 'b') {
@@ -378,31 +378,202 @@ class PaymentsController extends AppController {
 						$this->redirect(array('controller'=>'tickets','action' => 'menu'));
 					} else {
 						$code = $resp;
-					}
+					}*/
 				}
 				
-				if ($find['Setting']['receiptdemo']!='1') {
-					//normal redirect
-					$this->Session->setFlash('Ticket '.$ticket['Ticket']['dailyid'].' Paid');
-					$this->redirect(array('controller'=>'tickets','action' => 'menu'));
-				} else {
-					//gimme sample
-					$this->redirect(array('controller'=>'payments','action' => 'gimmesample/'.$id));
-				}
+				//normal redirect
+				//$this->Session->setFlash('Ticket '.$ticket['Ticket']['dailyid'].' Paid');
+				$this->redirect(array('controller'=>'payments','action' => 'trigger_receipt/'.$id));
+
 			} else {
 				$dif = $taxed-$am;
-				$this->Session->setFlash('The full amount was not been entered. (Short by $'.$dif.')');
+				$this->Session->setFlash('Total amount failed system double-check, the ticket was not paid out. (Short by $'.$dif.')');
 				$this->redirect(array('controller'=>'payments','action' => 'pay/'.$id));
 			}
+		}
+	}
+	
+	function trigger_receipt($id) {
+		$this->layout = 'trigger';
+		
+		$find = $this->Setting->find('first',array('order'=>'Setting.created ASC'));
+		if ($find['Setting']['receiptdemo']=='1') {
+			$this->set('demo','1');
 		} else {
-			//temporary for gimme
-			$resp = $this->_gimme($id,$total);
-			$this->set('url',$resp);
+			$this->set('demo','0');
+		}
+		$this->set('id',$id);
+	}
+	
+	function receipt_print($id) {
+		//die(print('sfhjlkh'));
+		if ($id==null) {
+			$this->Session->setFlash('Error: This function was accessed without the correct parameters (payments,receipt_print)');
+			$this->redirect(array('controller'=>'tickets','action' => 'menu'));
+		}
+		$this->layout = 'receipt';
+		
+		//set the settings
+		$find = $this->Setting->find('first',array('order'=>'Setting.created ASC'));
+		$this->set('s',$find['Setting']);
+		
+		//find ticket info
+		$this->Ticket->recursive = 2;
+		$ticket = $this->Ticket->findById($id);
+		$this->set('ticket',$ticket);
+		
+		$items = $this->Item->find('list',array('fields'=>array('Item.name')));
+			$price = $this->Item->find('list',array('fields'=>array('Item.price')));
+			$mods = $this->Modifier->find('list',array('fields'=>array('Modifier.name')));
+			$mprice = $this->Modifier->find('list',array('fields'=>array('Modifier.price')));
+			
+			//set up discount check
+			$disc = $this->Discount->find('all',array('conditions'=>array('Discount.enable'=>'1')));
+			$dis_id = array();
+			foreach ($disc as $d) {
+				$dis_id[] = $d['Discount']['item_id'];
+			}
+			
+			$sts = $this->Seat->find('all',array('conditions'=>array('Seat.ticket_id'=>$id),'order'=>'Seat.seat ASC'));
+			//pull data on individual orders and build array
+			$total = 0;
+			foreach($sts as $t) {
+				$se = $t['Seat']['seat'];
+				$or = $t['Seat']['orig_seat'];
+				$pr = $t['Seat']['total'];
+				$seats[$se]['seat'] = $se;
+				$seats[$se]['orig_seat'] = $or;
+				$sp = explode('.',$t['Seat']['total']);
+				if (isset($sp[1])) {
+					if (strlen($sp[1])==1) {
+						$pr = $pr.'0';
+					}
+				} else {
+					$pr = $pr.'.00';
+				}
+				$seats[$se]['total'] = $pr;
+				
+				$newt = rtrim($t['Seat']['items'],',');
+				$new = explode(',',$newt);
+				foreach ($new as $n) {
+					//find item
+					$first = strpos($n,'(');
+					$th = substr($n,0,$first);
+					
+					if ($th=='' || $th==0) {
+						//empty seat
+						$seats[$se]['item']=array();
+					} else {
+						//find mods for an item
+						$mfirst = strpos($n,'(')+1;
+						$m = substr($n,$mfirst,-1);
+						$newm = explode(':',$m);
+						$cou = 0;
+						$test = array();
+						$modextras = 0;
+						foreach ($newm as $nm) {
+							if ($nm!='' && substr($nm,0,1)!='|') {
+								$test[] = $mods[$nm];
+								//die(print_r($mprice[$nm]));
+								if ($mprice[$nm]!=0.00) {
+									$modextras += $mprice[$nm];
+								}
+							} elseif (substr($nm,0,1)=='|') {
+								$test[] = substr($nm,1);
+							}
+						}
+						//check for discounts
+						$p = 0;
+						if (in_array($th,$dis_id)) {
+							$dis = $this->Discount->find('all',array('conditions'=>array('Discount.item_id'=>$th)));
+							$today = strtolower(date('l'));
+							
+							foreach ($dis as $di) {
+								if ($di['Discount'][$today]=='1') {
+									$time = mktime(date('h'),date('i'),0);
+									if ($time>=strtotime($di['Discount']['start_time']) && $time<=strtotime($di['Discount']['end_time'])) {
+										$p = $di['Discount']['price']+$modextras;
+									}
+								}
+							}
+						} 
+						
+						if ($p==0) {
+							$p = $price[$th]+$modextras;
+						}
+						
+						$sp = explode('.',$p);
+						if (isset($sp[1])) {
+							if (strlen($sp[1])==1) {
+								$p = $p.'0';
+							}
+						} else {
+							$p = $p.'.00';
+						}
+						//put array together
+						$append=array($items[$th]=>array('mods'=>$test,'price'=>$p));
+						$seats[$se]['item'][]=$append;
+						$total += $p;
+					}
+				}
+			}
+			//format the total
+			$sp = explode('.',$total);
+			if (isset($sp[1])) {
+				if (strlen($sp[1])==1) {
+					$total = $total.'0';
+				}
+			} else {
+				$total = $total.'.00';
+			}
+			
+			$rate = $find['Setting']['tax']/100;
+			$rate = $rate+1;
+			$taxed = $total*$rate;
+			$taxed = round($taxed,'2');
+			
+			$this->set('total',$total);
+			$this->set('seats',$seats);
+		
+		//run Gimme!
+		if ($find['Setting']['use_gimme']=='1') {
+			$co = 0;
+			$then = time();
+			while ($co==0) {
+				$f = $this->Payment->find('count',array('conditions'=>array('Payment.ticket_id'=>$id)));
+				if (time()-$then>=10) {
+					$this->set('time','ok');
+					$co=1;
+				} elseif ($f!=0) {
+					$resp = $this->_gimme($id);
+					
+					//codes for errors:
+					// b - 404 error, authentication with gimme failed     c - other error (apache response over 399)
+					if ($resp=='b') {
+						$this->Session->setFlash('Gimme! Request Denied (404).  Your subscription may have expired.');
+						$this->set('url','0');
+					} elseif (substr($resp,0,1) == 'c') {
+						$this->Session->setFlash('Gimme\'s server returned an error ('.substr($resp,'1').'); check your Gimme settings.');
+						$this->set('url','0');
+					} else {
+						//decode json
+						//$rr = json_decode($resp);
+						
+						$this->set('url',$resp);
+					}
+					$this->set('time','ok');
+					$co=1;
+				}
+				unset($f);
+			}
+		} else {
+			$this->set('time','ok');
+			$this->set('url','0');
 		}
 	}
 	
 	function gimme_test($id,$total=null) {
-		$resp = $this->_gimme($id,$total);
+		$resp = $this->_gimme($id);
 	
 		//codes for errors:
 		// b - 404 error, authentication with gimme failed     c - other error (apache response over 399)
@@ -421,24 +592,19 @@ class PaymentsController extends AppController {
 		//}
 	}
 	
-	function _gimme($id,$total=null) {
-		if ($total==null) {
-			$total = '22.48';
-		}
-		
+	function _gimme($id) {
 		//generate signature-----------------------------------------------------------------------------------
 		$settings = $this->Setting->find('first',array('order'=>'Setting.created ASC'));
 		$loc = $settings['Setting']['locationid'];
-		//$loc = '2';
 		
 		//pull ticket data
 		$this->Ticket->recursive = 2;
 		$ticket = $this->Ticket->findById($id);
 		
 		//uncomment after demo
-		/*if (empty($ticket['Payment'])) {
+		if (empty($ticket['Payment'])) {
 			return false;
-		}*/
+		}
 		
 		$signature = null;
 		$toSign = $settings['Setting']['gimme_url']."/pos/api/location/".$loc."/receiptjson?sequence=2200012&signature=";
@@ -472,11 +638,11 @@ class PaymentsController extends AppController {
 		
 		$open = date("Y-m-d'6'h:i:s",strtotime($ticket['Ticket']['created']));
 		$open = str_replace("'6'","T",$open);
-		//$close = date("Y-m-d'6'h:i:s",strtotime($ticket['Payment'][0]['created']));
-		$close = date("Y-m-d'6'h:i:s",time());
+		$close = date("Y-m-d'6'h:i:s",strtotime($ticket['Payment'][0]['created']));
+		//$close = date("Y-m-d'6'h:i:s",time());
 		$close = str_replace("'6'","T",$close);
-		//$data = array('locationid'=>$loc,'openingtime'=>$open,'closingtime'=>$close,'totalamt'=>$ticket['Payment'][0]['amount'],'paymentmethod'=>$ticket['Payment'][0]['type']);
-		$data = array('locationid'=>$loc,'openingtime'=>$open,'closingtime'=>$close,'totalamt'=>$total,'paymentmethod'=>'cash');
+		$data = array('locationid'=>$loc,'openingtime'=>$open,'closingtime'=>$close,'totalamt'=>$ticket['Payment'][0]['amount'],'paymentmethod'=>$ticket['Payment'][0]['type']);
+		//$data = array('locationid'=>$loc,'openingtime'=>$open,'closingtime'=>$close,'totalamt'=>$total,'paymentmethod'=>'cash');
 		$its = array();
 		foreach ($ticket['Seat'] as $sts) {
 			$newt = rtrim($sts['items'],',');
@@ -549,16 +715,16 @@ class PaymentsController extends AppController {
 		
 		//die(print($code));
 		
-		/*if ($code>=400) {
+		if ($code>=400) {
 			if ($code==404) {
 				return 'b';
 			} else {
 				return 'c'.$code;
 			}
-		} else {*/
+		} else {
 		//die(print_r($result));
 			return $result;
-		//}
+		}
 	}
 	
 	function gimmesample($id){

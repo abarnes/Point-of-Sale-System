@@ -398,8 +398,14 @@ function remo(num,str) {
 				<!--------submit form----->
 				<script type="text/javascript">
 				function submitfr() {
-				  window.print();			
-				  document.getElementById('PaymentPay<?php echo '/'.$ticket['Ticket']['id']; ?>Form').submit();
+				  if (window.balance==0) {
+					document.getElementById('PaymentPay<?php echo '/'.$ticket['Ticket']['id']; ?>Form').submit();
+					//window.open('/payments/receipt_print/<?php echo $ticket['Ticket']['id']; ?>','_blank','width=300,menubar=0,status=0');
+				  } else {
+				        alert('The full amount has not be tendered (Balance: $'+window.balance+')');
+				  }
+				  //window.print();			
+				  //document.getElementById('PaymentPay<?php echo '/'.$ticket['Ticket']['id']; ?>Form').submit();
 				}
 				</script>
 			<br/>
