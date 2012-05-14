@@ -11,7 +11,6 @@ www.barnespos.com
 -------------------------------------------------------------------------------*/
 class Category extends AppModel {
     var $name = 'Category';       
-    var $hasMany = array('Item'); 
-    
+    var $hasMany = array('Item');
 }
 ?>

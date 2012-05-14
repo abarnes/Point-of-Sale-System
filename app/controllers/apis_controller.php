@@ -13,7 +13,7 @@ class ApisController extends AppController {
  
 	var $name = 'Apis';
 	var $helpers = array('Html', 'Form', 'Time', 'javascript');
-	var $uses = array('Api','Ticket','Item','Seat','Clock','User','Payment');
+	var $uses = array('Api','Ticket','Item','Seat','Clock','User','Payment','Category');
 	var $components = array('Auth','Session');
 	
 	/*------------------------------------------------------------------------------------------------------------------------------------------------
@@ -50,24 +50,6 @@ class ApisController extends AppController {
 		$this->set('apis',$this->Api->find('all',array('order'=>'Api.created DESC')));
 	}
 /*----------------------------------------------------end test functions--------------------------------------------------------------------*/	
-	
-	//login a user to a device without clocking in----unnecessary, use clockin function
-	//function login(){
-		/*--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
-		Send the following values through post:
-		Key		|	Example Value
-		'username'	|	'phillip'  	(send a string containing the username)
-		'password'	|	'ilikecows1'	(send a string for the password)
-		-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
-		$data = $_POST;
-		if ($this->Auth->login(array('username'=>$data['username'],'password'=>$data['password']))) {
-			//good
-			echo $data['username'].' logged in.';
-		} else {
-			//fail
-			echo 'Failed to login';
-		}
-	}*/
 	
 	//clock in and login
 	function clockin() {
@@ -170,10 +152,29 @@ class ApisController extends AppController {
 		}
 	}
 	
-	//logout from a device without clocking out
-	/*function logout(){
-		
-	}*/
+	//sync categories, items, and modifiers
+	function sync() {
+		$this->Category->Behaviors->attach('Containable');
+		$find = $this->Category->find('all',array(
+			'contain'=>array(
+				'Item'=>array(
+					'conditions'=>array(
+						'Item.enable'=>1
+					),
+					'Modifier'=>array(
+						'conditions'=>array(
+							'Modifier.enable'=>1
+						)
+					)
+				)
+			),
+			'conditions'=>array(
+				'Category.enable'=>1
+			)
+		));
+		echo json_encode($find);
+		exit();
+	}
 	
 	//Submit a new ticket
 	function submit_ticket() {
